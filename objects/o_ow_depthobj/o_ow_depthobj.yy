@@ -10,8 +10,8 @@
   "name":"o_ow_depthobj",
   "overriddenProperties":[],
   "parent":{
-    "name":"tldr-engine",
-    "path":"tldr-engine.yyp",
+    "name":"ow",
+    "path":"folders/@Engine/objects/ow.yy",
   },
   "parentObjectId":{
     "name":"o_block",

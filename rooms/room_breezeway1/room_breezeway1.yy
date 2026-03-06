@@ -13,8 +13,8 @@
   ],
   "name":"room_breezeway1",
   "parent":{
-    "name":"Rooms",
-    "path":"folders/Rooms.yy",
+    "name":"Breezeway",
+    "path":"folders/Rooms/Breezeway.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

@@ -29,3 +29,8 @@ action_queue = []
 items_using = []
 
 battle_menu = BATTLE_MENU.BUTTON_SELECTION
+for (var i = 0; i < array_length(global.party_names); ++i) {
+    var n = global.party_names[i];
+    party_setdata(n, "highguard_turns", 0);
+    party_setdata(n, "highguard_power", 0);
+}

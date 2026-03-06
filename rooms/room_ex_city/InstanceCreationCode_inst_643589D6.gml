@@ -3,13 +3,12 @@ trigger_code = function() {
 	cutscene_create()
 	if count == 0 {
 		cutscene_dialogue([
-			"* (You were going to leave, but...)",
-			"* (There road was cut abruptly right before you.)"
+			  "{char(reggie, 1)}* No reason for us to go back there."
 		])
     }
     else {
 		cutscene_dialogue([
-			"* (There is no road.)",
+			"* Theres a monster there.",
 		])
 	}
 	cutscene_func(function() {

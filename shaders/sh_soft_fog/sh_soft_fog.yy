@@ -1,0 +1,12 @@
+{
+  "$GMShader":"",
+  "%Name":"sh_soft_fog",
+  "name":"sh_soft_fog",
+  "parent":{
+    "name":"Shaders",
+    "path":"folders/Shaders.yy",
+  },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
+}

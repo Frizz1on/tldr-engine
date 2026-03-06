@@ -26,7 +26,7 @@ trigger_code = function() {
     
 
     cutscene_dialogue([
-        "{char(ralsei, 43)}* U-um... Reggie?  [placeholder]?",
+        "{char(ralsei, 43)}* U-um... Reggie?  Amari?",
         "{char(ralsei, 43)}* SOMETHINGS FOLLOWING US!."
     ],, false, false)
     cutscene_wait_dialogue_finish()

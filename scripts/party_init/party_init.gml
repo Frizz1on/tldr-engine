@@ -23,7 +23,7 @@ function party_apply_equipment() {
 }
 function party_m_calculate_hp(base_hp, level) {
     if level == 1
-        return base_hp + 40
+        return base_hp
     else if level == 2
         return base_hp + 30
     else
@@ -144,9 +144,9 @@ function party_m_kris(_initialized_name) : party_m(_initialized_name) constructo
 	}
 	
 	// inventory
-    weapon =new  item_w_spookysword()
-    armor1 =  new item_a_ambercard()
-    armor2 =  new item_a_ambercard()
+    weapon = new item_w_sgun()
+    armor1 = new item_a_ambercard()
+    armor2 = new item_a_ambercard()
 	spells = [
 		new item_s_act()
 	]
@@ -200,19 +200,22 @@ function party_m_susie(_initialized_name) : party_m(_initialized_name) construct
 	
 	max_hp =	party_m_calculate_hp(70, lv)
     hp =        max_hp
-	attack =	16
+	attack =	2
 	defense =	2
-	magic =		1
+	magic =		16
 	element_resistance = {
 	}
 	
 	// inventory
-    weapon =  new item_w_mane_ax()
-    armor1 =  new item_a_ambercard()
-    armor2 =  new item_a_ambercard()
+    weapon = new item_w_mane_ax()
+    armor1 = new item_a_ambercard()
+    armor2 = new item_a_ambercard()
 	spells = [
-	new  item_s_rudebuster(),
-      new  item_s_susieheal()
+		new item_s_rudebuster(),
+        new item_s_susieheal(),
+		new item_s_thunderzap(),
+		new item_s_testdmg()
+		
 	]
 	
 	// sprites
@@ -268,19 +271,20 @@ function party_m_ralsei(_initialized_name) : party_m(_initialized_name) construc
 	
 	max_hp =	party_m_calculate_hp(120, lv)
     hp =		max_hp
-	attack =	8
-	defense =	2
-	magic =		9
+	attack =	6
+	defense =	7
+	magic =		4
 	element_resistance = {
 	}
 	
 	// inventory
-    weapon = new   item_w_red_scarf()
-    armor1 = new  item_a_ambercard()
-    armor2 =  new item_a_white_ribbon()
+    weapon = new item_w_red_scarf()
+    armor1 = new item_a_ambercard()
+    armor2 = new item_a_white_ribbon()
 	spells = [
 		new item_s_pacify(),
-		new item_s_healprayer()
+		new item_s_healprayer(),
+		new item_s_highguard()
 	]
 	
 	// sprites
@@ -341,9 +345,9 @@ function party_m_noelle(_initialized_name) : party_m(_initialized_name) construc
 	}
 	
 	// inventory
-    weapon =  item_w_snowring;
-    armor1 =  item_a_silver_watch;
-    armor2 =  item_a_royal_pin;
+    weapon = new item_w_snowring()
+    armor1 = new item_a_silver_watch()
+    armor2 = new item_a_royal_pin()
 	spells = [
 		new item_s_healprayer(),
 		new item_s_sleepmist(),

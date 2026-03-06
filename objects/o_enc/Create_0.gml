@@ -1,3 +1,8 @@
+flash_color = c_white;
+flash_alpha = 0;
+flash_decay = 0;
+
+
 { // set up the colors we use for the ui
 	bcolor = merge_color(c_purple, c_black, 0.7)
 	bcolor = merge_color(bcolor, c_dkgray, 0.5)
@@ -8,6 +13,8 @@
     waiting_internal = false // the waiting variable for ME!! me onLY!!!!!!! nGHHHHH im evil
     surf = -1
     
+	highcharge_active = false;
+	highguard_active = false;
     tp = 0
     tp_constrict = false // darkness constriction
     tp_glow_alpha = 0
@@ -276,13 +283,13 @@ __order_action_queue = function(_action_queue = action_queue) {
         return true
     })
     
-    array_sort_ext(output, function(current, next) {
+    array_sort(output, function(current, next) {
         var cur_order = array_get_index(action_order, instanceof(current))
         var next_order = array_get_index(action_order, instanceof(next))
         var party_order = party_get_index(current.acting_member)
         var next_party_order = party_get_index(next.acting_member)
         
-        return next_order - cur_order + party_order - next_party_order
+        return (cur_order - next_order) * party_getpossiblecount() + party_order - next_party_order
     })
     
     return output

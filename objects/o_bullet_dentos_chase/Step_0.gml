@@ -29,27 +29,31 @@ if (timer % attack_cycle == 0) {
     attack_mode = !attack_mode;
     if (!instance_exists(target)) exit;
 
-    if (attack_mode == 0) {
-        var p_vx = target.x - target.xprevious; 
-        var p_vy = target.y - target.yprevious;
-        var predict_x = target.x + (p_vx * 15);
-        var predict_y = target.y + (p_vy * 15);
-        var base_dir = point_direction(x, y, predict_x, predict_y);
+   if (attack_mode == 0) {
 
-        for (var burst = 0; burst < 2; burst++) {
-            var b_speed = (burst == 0) ? 5 : 7; 
-            for (var i = 0; i < 4; i++) {
-                var angle_offset = (i - 1.5) * 15; 
-                var b = instance_create(o_spawn_diamond, x, y, depth + 1);
-                with (b) {
-                    direction = base_dir + angle_offset;
-                    mode = "instant";
-                    speed = b_speed; 
-                }
-            }
+    var p_vx = target.x - target.xprevious; 
+    var p_vy = target.y - target.yprevious;
+    var predict_x = target.x + (p_vx * 15);
+    var predict_y = target.y + (p_vy * 15);
+    var base_dir = point_direction(x, y, predict_x, predict_y);
+
+    for (var i = 0; i < 4; i++) {
+        var angle_offset = (i - 1.5) * 12; 
+        var b = instance_create(o_spawn_diamond, x, y, depth + 1);
+        with (b) {
+            direction = base_dir + angle_offset;
+            mode = "instant";
+            speed = 8;             
+            max_speed = 12;        
         }
-        audio_play(snd_crow, 0, 1, 0.8);
-    } 
+    }
+
+
+    shotgun_dir = base_dir;  
+    alarm[0] = 8;          
+
+    audio_play(snd_crow, 0, 1, 0.9);
+}
     else {
         cross_toggle = !cross_toggle;
         var cx = camera_get_view_x(view_camera[0]);
@@ -64,8 +68,12 @@ if (timer % attack_cycle == 0) {
         for(var i=0; i<array_length(spawn_data); i++) {
             var b = instance_create(o_spawn_diamond, spawn_data[i].sx, spawn_data[i].sy, depth+1);
             with (b) {
-                direction = spawn_data[i].sd;
-                mode = "windup";
+			    direction = spawn_data[i].sd;
+			    mode = "windup";
+    
+			    speed = 6;           
+			    max_speed = 18;       
+			    accel = 0.6;  
                 if (!other.cross_toggle) tracking_type = "point"; 
                 else tracking_type = (direction == 0 || direction == 180) ? "y" : "x";
             }

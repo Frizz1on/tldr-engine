@@ -1,6 +1,9 @@
 /// @desc init for the typer characters
 function typer_chars_init()  {
     new typer_char_none().__initialize()
+	new typer_char_reggie().__initialize()
+	new typer_char_berry().__initialize()
+	new typer_char_larry().__initialize()
     new typer_char_susie().__initialize()
     new typer_char_susie_bangs().__initialize()
     new typer_char_ralsei().__initialize()
@@ -34,6 +37,29 @@ function typer_char() constructor {
 }
 
 // -------------------- child constructors --------------------
+
+function typer_char_reggie() : typer_char() constructor {
+    name = "reggie"
+    
+    face_sprite = spr_face_kris
+    voice = snd_reggie_voice
+}
+
+function typer_char_larry() : typer_char() constructor {
+    name = "larry"
+    
+    voice = snd_larry_voice
+	 voice_skip = 3
+	
+}
+
+function typer_char_berry() : typer_char() constructor {
+    name = "berry"
+	
+    voice = snd_berry_voice
+	 voice_skip = 3
+}
+
 
 function typer_char_none() : typer_char() constructor {
 }

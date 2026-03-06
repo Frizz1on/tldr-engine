@@ -1,21 +1,23 @@
 event_inherited()
 
-image_xscale = 2
-image_yscale = 2
+
+sprite_index = spr_ex_e_dentos_diamond;
+image_speed = 0;
+image_index = 0;
+image_xscale = 2;
+image_yscale = 2;
 image_angle = direction + 90; 
 mode = "windup";
 tracking_type = "";
-speed = 2
-timer = 0
+speed = 2;
+timer = 0;
 
-element = "dark_star"
-dmg = 20
+element = "dark_star";
+dmg = 20;
 
-image_xscale = 0
 collide = false;
 
 
-if (sprite_index == -1) sprite_index = spr_ex_e_dentos_diamond; 
 depth_override = -16000; 
 
 trail_max = 6; 

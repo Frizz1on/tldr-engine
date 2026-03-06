@@ -1,1 +1,1 @@
-audio_stop_sound(mus_chasealt);
+audio_stop_all()

@@ -10,7 +10,7 @@
   "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":8.727279,
+  "duration":29.93068,
   "exportDir":"",
   "name":"mus_drone",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"mus_drone.ogg",
+  "soundFile":"mus_drone.mp3",
   "volume":1.0,
 }
