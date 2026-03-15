@@ -19,23 +19,29 @@ trigger_code = function() {
 
     // Entire active party jumps together.
     cutscene_func(function() { audio_play(snd_jump); });
-    for (var _i = 0; _i < array_length(_names); _i++) {
-        var _inst = party_get_inst(_names[_i]);
-        if (!instance_exists(_inst)) continue;
-
-        cutscene_actor_move(_inst, [
-            new actor_movement_jump(_land.x, _land.y)
-        ], _i, false);
-    }
-
-    // Restore movement as soon as the leader lands.
+    cutscene_actor_move(party_get_inst(_names[0]), [
+        new actor_movement_jump(_land.x, _land.y)
+    ], 0, false);
     cutscene_wait_until(function() {
         with (o_actor_mover) { if (pos == 0) return false; }
         return true;
     });
+
     cutscene_func(function() {
         cutscene_player_canmove(true);
     });
+
+    // Followers jump shortly after the leader without pausing player movement.
+    for (var _i = 1; _i < array_length(_names); _i++) {
+        var _inst = party_get_inst(_names[_i]);
+        if (!instance_exists(_inst)) continue;
+
+        cutscene_sleep(2);
+        cutscene_func(function() { audio_play(snd_jump); });
+        cutscene_actor_move(_inst, [
+            new actor_movement_jump(_land.x, _land.y)
+        ], _i, false);
+    }
 
     cutscene_wait_until(function() {
         return !instance_exists(o_actor_mover);
