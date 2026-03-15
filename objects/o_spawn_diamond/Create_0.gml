@@ -25,3 +25,4 @@ for (var i = 0; i < trail_max; i++) {
     trail_x[i] = x;
     trail_y[i] = y;
 }
+use_line_telegraph = true;

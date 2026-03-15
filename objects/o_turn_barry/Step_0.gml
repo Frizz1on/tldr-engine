@@ -31,28 +31,30 @@ if (pattern == "shield_wall") {
         var _fire_rate = 28 - min(8, timer div 55);
         if (column_timer % _fire_rate == 0) {
             var _volley = column_timer div _fire_rate;
-
-            // Alternating Y positions — two rows offset by half the spacing.
-            // This produces the zigzag ladder in the diagram:
-            //   even volleys:  upper row  (~33% down the box)
-            //   odd  volleys:  lower row  (~67% down the box)
-            // The player moves up/down to thread between them.
-            var _row_y = (_volley mod 2 == 0)
-                ? _bt + o_enc_box.height * 0.33
-                : _bt + o_enc_box.height * 0.67;
-
-            // Spawn just outside the edge the attack fires from
+            var _row_a = _bt + o_enc_box.height * 0.28;
+            var _row_b = _bt + o_enc_box.height * 0.72;
+            var _row_y = (_volley mod 2 == 0) ? _row_a : _row_b;
             var _spawn_x = (volley_dir > 0) ? _bl - 8 : _br + 8;
-            var _dir     = (volley_dir > 0) ? 0 : 180;   // 0 = right, 180 = left
+            var _dir     = (volley_dir > 0) ? 0 : 180;
 
-            var _b = instance_create_depth(_spawn_x, _row_y,
-                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-            _b.direction   = _dir;
-            _b.speed       = random_range(3.5, 5);
-            _b.image_angle = _dir;
+            // Fire a paired lane + a center pressure shot so camping one tile is unsafe
+            for (var _n = 0; _n < 2; _n++) {
+                var _b = instance_create_depth(_spawn_x, _row_y + (_n * 14 - 7),
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _b.direction   = _dir + random_range(-4, 4);
+                _b.speed       = random_range(3.8, 5.4);
+                _b.image_angle = _dir;
+            }
 
-            // Flip firing side every 8 volleys so the attack doesn't always come from one side
-            if (_volley > 0 && _volley mod 8 == 0) volley_dir *= -1;
+            if (_volley mod 3 == 1) {
+                var _mid = instance_create_depth(_spawn_x, _by,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _mid.direction   = _dir;
+                _mid.speed       = 5.6;
+                _mid.image_angle = _dir;
+            }
+
+            if (_volley > 0 && _volley mod 6 == 0) volley_dir *= -1;
         }
     }
 
@@ -74,24 +76,25 @@ else if (pattern == "shield_crush") {
         wall_inst = instance_create_depth(
             _start_x, _by,
             DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-        wall_inst.image_xscale = 3;
-        wall_inst.image_yscale = 7;
+        wall_inst.image_xscale = 2.2;
+        wall_inst.image_yscale = 6;
         wall_inst.destroy      = false;
         wall_inst.att          = 0;
+        wall_inst.owner_turn   = id;
         wall_side = crush_dir;
         alarm[1] = 28;
     }
-    if (timer >= 55 && timer < 175 && timer % 20 == 0) {
+    if (timer >= 55 && timer < 175 && timer % 16 == 0) {
         if (!instance_exists(wall_inst)) exit;
         var _fire_dir = (wall_side > 0) ? 0 : 180;
         var _spawn_x  = (wall_side > 0) ? _bl + 2 : _br - 2;
         for (var _r = 0; _r < 3; _r++) {
             if (_r == 1 && (wall_volley_row mod 2 == 0)) continue;
-            var _ry = _bt + 10 + _r * (_bhh * 0.85);
+            var _ry = _bt + 14 + _r * (_bhh * 0.82);
             var _b  = instance_create_depth(_spawn_x, _ry,
                 DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-            _b.direction   = _fire_dir + random_range(-6, 6);
-            _b.speed       = random_range(3, 4);
+            _b.direction   = _fire_dir + random_range(-10, 10);
+            _b.speed       = random_range(3.8, 5.2);
             _b.image_angle = _fire_dir;
         }
         wall_volley_row++;

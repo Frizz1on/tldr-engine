@@ -2,6 +2,7 @@ event_inherited();
 
 instance_destroy(o_ex_bullet_dentos_eye)
 instance_destroy(o_ex_bullet_dentos_diamond)
+instance_destroy(o_spawn_diamond)
 instance_destroy(current_cutscene)
 
 var inst = enemy_struct.actor_id
