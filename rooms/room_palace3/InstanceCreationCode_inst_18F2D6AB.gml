@@ -17,7 +17,7 @@ trigger_code = function() {
 
     var _names = global.party_names;
 
-    // Leader jumps first
+    // Entire active party jumps together.
     cutscene_func(function() { audio_play(snd_jump); });
     cutscene_actor_move(party_get_inst(_names[0]), [
         new actor_movement_jump(_land.x, _land.y)
