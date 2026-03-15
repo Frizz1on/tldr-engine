@@ -17,36 +17,31 @@ trigger_code = function() {
 
     var _names = global.party_names;
 
-    // Leader jumps first
+    // Entire active party jumps together.
     cutscene_func(function() { audio_play(snd_jump); });
-    cutscene_actor_move(party_get_inst(_names[0]), [
-        new actor_movement_jump(_land.x, _land.y)
-    ], 0, false);
+    for (var _i = 0; _i < array_length(_names); _i++) {
+        var _inst = party_get_inst(_names[_i]);
+        if (!instance_exists(_inst)) continue;
+
+        cutscene_actor_move(_inst, [
+            new actor_movement_jump(_land.x, _land.y)
+        ], _i, false);
+    }
+
+    // Restore movement as soon as the leader lands.
     cutscene_wait_until(function() {
         with (o_actor_mover) { if (pos == 0) return false; }
         return true;
     });
-
-    // Each follower waits 6 frames (~0.1s) after the previous lands, then jumps
-    for (var _i = 1; _i < array_length(_names); _i++) {
-        var _inst = party_get_inst(_names[_i]);
-        if (!instance_exists(_inst)) continue;
-
-        cutscene_sleep(6);
-        cutscene_func(function() { audio_play(snd_jump); });
-        cutscene_actor_move(_inst, [
-            new actor_movement_jump(_land.x, _land.y)
-        ], _i, false);
-        cutscene_wait_until(function(_i) {
-            with (o_actor_mover) { if (pos == _i) return false; }
-            return true;
-        }, [_i]);
-    }
-
-    cutscene_sleep(6);
-
     cutscene_func(function() {
         cutscene_player_canmove(true);
+    });
+
+    cutscene_wait_until(function() {
+        return !instance_exists(o_actor_mover);
+    });
+
+    cutscene_func(function() {
         cutscene_party_follow(true);
         cutscene_party_interpolate();
     });
