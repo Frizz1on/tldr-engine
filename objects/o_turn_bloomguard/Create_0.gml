@@ -10,4 +10,7 @@ pattern_pool = [
 ];
 
 wave_shift = 0;
-bloom_count = 0;
+wave_xs = [];
+sniper_aim = 270;
+bloom_x = 0;
+bloom_y = 0;
