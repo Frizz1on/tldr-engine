@@ -487,7 +487,7 @@ function enemy_sentinel() : enemy() constructor {
 // ── 2. BLOOMGUARD ────────────────────────────────────────────────────────────
 // A territorial plant creature from the palace gardens. Slow, stubborn,
 // surprisingly polite if you're gentle back.
-// Attacks: "thorn_wall" (solo) / "single_thorn" (group-safe)
+// Attacks: "thorn_wave" (solo) / "thorn_sniper" (group-safe)
 function enemy_bloomguard() : enemy() constructor {
     name       = "Bloomguard"
     obj        = o_actor_bloomguard
@@ -634,7 +634,7 @@ function enemy_bloomguard() : enemy() constructor {
 // ── 3. CLOUDPUFF ─────────────────────────────────────────────────────────────
 // A soft, ambient cloud creature. Non-confrontational until provoked.
 // Drifts through the palace naturally. Very confused by aggression.
-// Attacks: "gust_rings" (solo) / "light_gust" (group-safe)
+// Attacks: "gust_hunt" (solo) / "light_gust" (group-safe)
 function enemy_cloudpuff() : enemy() constructor {
     name       = "Cloudpuff"
     obj        = o_actor_cloudpuff

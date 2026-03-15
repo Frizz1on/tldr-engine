@@ -1,12 +1,11 @@
 event_inherited();
-timer++;
 
 if (!instance_exists(o_enc_box)) exit;
 if (!variable_struct_exists(enemy_struct,"actor_id")) exit;
 
 var o = enemy_struct.actor_id;
 if (!instance_exists(o)) exit;
-
+if (!instance_exists(o_enc_soul)) exit;
 
 var _bx  = o_enc_box.x;
 var _by  = o_enc_box.y;
@@ -18,153 +17,118 @@ var _br = _bx + _bhw;
 var _bt = _by - _bhh;
 var _bb = _by + _bhh;
 
-
-
-/// THORN WAVE
-/// sweeping columns forcing the player to move
-
 if (pattern == "thorn_wave") {
-
     if (timer == 1) {
-
-        o.depth_override =
-        DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
-
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
         o.depth = o.depth_override;
-
-        wave_shift = irandom_range(-40,40);
+        wave_shift = 0;
     }
 
+    if (timer >= 20 && timer <= 136) {
+        var _local = (timer - 20) mod 24;
 
-    if (timer > 15 && timer < 140 && timer % 20 == 0) {
+        if (_local == 0) {
+            wave_xs = [];
+            wave_shift += random_range(-16, 16);
+            var _cols = 6;
+            for (var _i = 0; _i < _cols; _i++) {
+                var _x = _bl + o_enc_box.width * ((_i + 0.5) / _cols) + wave_shift;
+                _x = clamp(_x, _bl + 12, _br - 12);
+                array_push(wave_xs, _x);
 
-        wave_shift += random_range(-25,25);
-
-        var _cols = 6;
-
-        for (var i=0; i<_cols; i++) {
-
-            var _x = _bl + o_enc_box.width * ((i+0.5)/_cols);
-            _x += wave_shift;
-
-            var b = instance_create_depth(
-                _x,
-                _bb + 8,
-                DEPTH_ENCOUNTER.BULLETS_OUTSIDE,
-                o_enc_bullet
-            );
-
-            b.direction = 270;
-            b.speed = random_range(3.5,5);
-
-            b.image_angle = 270;
-
-            // sideways drift for unpredictability
-            b.hspeed = random_range(-0.7,0.7);
+                var _w = instance_create_depth(_x, _bb + 8,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _w.speed = 0;
+                _w.att = 0;
+                _w.destroy = false;
+                _w.image_xscale = 0.55;
+                _w.image_yscale = 0.55;
+            }
         }
-    }
 
-
-    if (timer > 160) {
-        o.depth_override = undefined;
-        instance_destroy();
-    }
-}
-
-
-
-
-/// THORN SNIPER
-/// predictive shots toward player movement
-
-else if (pattern == "thorn_sniper") {
-
-    if (timer == 1) {
-
-        o.depth_override =
-        DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
-
-        o.depth = o.depth_override;
-    }
-
-
-    if (timer == 30 || timer == 70 || timer == 110) {
-
-        if (instance_exists(o_enc_soul)) {
-
-            var px = o_enc_soul.x + o_enc_soul.hspeed * 12;
-            var py = o_enc_soul.y + o_enc_soul.vspeed * 12;
-
-            var aim = point_direction(o.x,o.y,px,py);
-
-            for (var i=-2; i<=2; i++) {
-
-                var b = instance_create_depth(
-                    o.x,
-                    o.y,
-                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE,
-                    o_enc_bullet
-                );
-
-                b.direction = aim + i * 12;
-                b.speed = random_range(4,6);
-                b.image_angle = b.direction;
+        if (_local == 12) {
+            for (var _j = 0; _j < array_length(wave_xs); _j++) {
+                var _b = instance_create_depth(wave_xs[_j], _bb + 8,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _b.direction = 90;
+                _b.speed = 4.1;
+                _b.image_angle = 90;
             }
         }
     }
 
-
-    if (timer > 150) {
+    if (timer > 154) {
         o.depth_override = undefined;
         instance_destroy();
     }
 }
-
-
-
-
-/// THORN BLOOM
-/// arena-centered radial thorn explosions
-
-else if (pattern == "thorn_bloom") {
-
+else if (pattern == "thorn_sniper") {
     if (timer == 1) {
-
-        o.depth_override =
-        DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
-
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
         o.depth = o.depth_override;
-
-        bloom_count = 0;
     }
 
+    if (timer == 26 || timer == 62 || timer == 98) {
+        var _px = o_enc_soul.x + o_enc_soul.hspeed * 10;
+        var _py = o_enc_soul.y + o_enc_soul.vspeed * 10;
+        sniper_aim = point_direction(o.x, o.y, _px, _py);
 
-    if (timer % 35 == 0 && bloom_count < 4) {
+        var _warn = instance_create_depth(o.x, o.y,
+            DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+        _warn.speed = 0;
+        _warn.att = 0;
+        _warn.destroy = false;
+        _warn.image_xscale = 0.7;
+        _warn.image_yscale = 0.7;
+        _warn.image_angle = sniper_aim;
+    }
 
-        var cx = random_range(_bl + 20,_br - 20);
-        var cy = random_range(_bt + 20,_bb - 20);
-
-        for (var i=0;i<10;i++) {
-
-            var dir = i * 36;
-
-            var b = instance_create_depth(
-                cx,
-                cy,
-                DEPTH_ENCOUNTER.BULLETS_OUTSIDE,
-                o_enc_bullet
-            );
-
-            b.direction = dir;
-            b.speed = random_range(3,4.5);
-            b.image_angle = dir;
+    if (timer == 38 || timer == 74 || timer == 110) {
+        for (var _k = -1; _k <= 1; _k++) {
+            var _b2 = instance_create_depth(o.x, o.y,
+                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+            _b2.direction = sniper_aim + _k * 9;
+            _b2.speed = 4.5;
+            _b2.image_angle = _b2.direction;
         }
-
-        bloom_count++;
     }
 
+    if (timer > 138) {
+        o.depth_override = undefined;
+        instance_destroy();
+    }
+}
+else if (pattern == "thorn_bloom") {
+    if (timer == 1) {
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
+        o.depth = o.depth_override;
+    }
 
-    if (timer > 160) {
+    if (timer == 24 || timer == 62 || timer == 100) {
+        bloom_x = clamp(o_enc_soul.x + random_range(-24, 24), _bl + 24, _br - 24);
+        bloom_y = clamp(o_enc_soul.y + random_range(-24, 24), _bt + 24, _bb - 24);
+
+        var _warn2 = instance_create_depth(bloom_x, bloom_y,
+            DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+        _warn2.speed = 0;
+        _warn2.att = 0;
+        _warn2.destroy = false;
+        _warn2.image_xscale = 0.8;
+        _warn2.image_yscale = 0.8;
+    }
+
+    if (timer == 36 || timer == 74 || timer == 112) {
+        for (var _n = 0; _n < 10; _n++) {
+            var _dir = _n * 36;
+            var _b3 = instance_create_depth(bloom_x, bloom_y,
+                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+            _b3.direction = _dir;
+            _b3.speed = 3.6;
+            _b3.image_angle = _dir;
+        }
+    }
+
+    if (timer > 140) {
         o.depth_override = undefined;
         instance_destroy();
     }
