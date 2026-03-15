@@ -56,8 +56,8 @@ if (pattern == "sword_sweep") {
 // The 4 columns are evenly spread with one gap always left open.
 else if (pattern == "sword_stakes") {
     // Plant one stake every 30 frames, offset across the box
-    // Columns at 15%, 35%, 65%, 85% — leaving the middle 30% as breathing room
-    var _cols = [0.15, 0.38, 0.62, 0.85];
+    // Staggered columns so repeated volleys force movement between lanes
+    var _cols = [0.12, 0.34, 0.58, 0.86];
 
     if (timer >= 10 && stake_count < 4) {
         if ((timer - 10) % 30 == 0) {
@@ -69,6 +69,7 @@ else if (pattern == "sword_stakes") {
             _s.image_angle = 90;   // pointing up
             _s.att         = 0;
             _s.destroy     = false;
+            _s.owner_turn  = id;
             stake_x[stake_count]    = _sx;
             stake_inst[stake_count] = _s;
             stake_fired[stake_count] = false;
@@ -88,8 +89,8 @@ else if (pattern == "sword_stakes") {
                 for (var _j = -1; _j <= 1; _j++) {
                     var _b = instance_create_depth(stake_x[_i], _bb - 4,
                         DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-                    _b.direction   = 90 + _j * 18;    // 90 = up in GML
-                    _b.speed       = random_range(3.5, 5);
+                    _b.direction   = 90 + _j * 14 + choose(-6, 0, 6);    // 90 = up in GML
+                    _b.speed       = random_range(4.2, 6.1);
                     _b.image_angle = _b.direction;
                 }
             }

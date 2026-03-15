@@ -15,5 +15,5 @@ var _y2 = _by + _bhh;
 
 draw_set_color(c_red);
 draw_set_alpha(flash_alpha);
-draw_rectangle(_x1, _y1, _x2, _y2, false);
+draw_rectangle(_x1, _y1, _x2, _y2, true);
 draw_set_alpha(1);

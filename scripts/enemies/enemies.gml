@@ -382,7 +382,7 @@ function enemy_sentinel() : enemy() constructor {
                     "* It keeps holding.",
                 ])
                 cutscene_dialogue(
-                    "* SENTINEL: ...Command not recognised.{s(10)}{br}{resetx}" +
+                    "* ...Command not recognised.{s(10)}{br}{resetx}" +
                     "* But it stopped moving for a moment."
                 )
                 cutscene_set_variable(o_enc, "waiting", false)
@@ -463,22 +463,22 @@ function enemy_sentinel() : enemy() constructor {
         var me = o_enc.encounter_data.enemies[slot]
         if me.mercy >= 100
             return array_shuffle([
-                "* SENTINEL: ...Patrol suspended.",
+                "* Patrol suspended.",
                 "* The Sentinel hovers in place. Its light is soft.",
-                "* SENTINEL: Stand by.",
+                "* The Sentinel idles in standby mode.",
             ])[0]
         if me.hp < me.max_hp * 0.35
             return array_shuffle([
-                "* SENTINEL: Warning. Unit integrity at low threshold.",
-                "* SENTINEL: Engaging secondary protocol.",
-                "* SENTINEL: Intruders will not pass.",
+                "* Warning: unit integrity is critically low.",
+                "* Secondary protocol engaged.",
+                "* The Sentinel blocks the route forward.",
             ])[0]
         return array_shuffle([
-            "* SENTINEL: Intruder detected.",
-            "* SENTINEL: Halt. This area is restricted.",
-            "* SENTINEL: Scanning...",
-            "* SENTINEL: You are not authorised.",
-            "* SENTINEL: Return to permitted zones.",
+            "* Intruder detected.",
+            "* Halt. This area is restricted.",
+            "* The Sentinel scans for movement.",
+            "* Access denied.",
+            "* Return to authorised zones.",
         ])[0]
     }
 }

@@ -36,7 +36,7 @@ function enc_set_larry_berry() : enc_set() constructor {
         // FIX: removed embedded literal newline — was: "* LARRY: Don't \n don't stop, Berry."
         if larry_low && berry_low
             return choose(
-                "* LARRY: Don't... don't stop, Berry.",
+                "* Larry grips his sword with both hands.",
                 "* The ground shakes slightly with every breath Larry takes.",
                 "* Berry has not moved an inch."
             )
@@ -44,23 +44,23 @@ function enc_set_larry_berry() : enc_set() constructor {
             return choose(
                 "* Larry is staring at the ceiling.",
                 "* Larry's grip on his sword loosens.",
-                "* LARRY (quietly): Berry, did I used to like this job?"
+                "* Larry looks toward Berry for reassurance."
             )
         if berry_tired
             return choose(
                 "* Berry lowers her second shield slightly.",
                 "* Berry has stopped watching you. She's watching the wall.",
-                "* Berry: ..."
+                "* Berry stays silent."
             )
         return choose(
-            "* LARRY: HOLD THE LINE BERRY.",
+            "* Larry signals Berry to brace.",
             "* Berry raises both shields.",
-            "* LARRY: DON'T LET THEM THROUGH.",
-            "* Berry: ...",
+            "* Larry squares up in front of the team.",
+            "* Berry stays silent.",
             "* The buzzer on Larry's helm screams.",
-            "* LARRY: I WILL USE THIS SWORD.",
+            "* Larry raises his sword to shoulder height.",
             "* Berry steps forward one inch. That's a threat.",
-            "* LARRY: BERRY ARE YOU EVEN LISTENING."
+            "* Berry does not react to Larry's gestures."
         )
     }
     // FIX: was _target_calculation — engine reads encounter.target_calculation, underscore version was silently ignored
@@ -87,10 +87,10 @@ function enc_set_sentinel() : enc_set() constructor {
     flavor     = function() {
         if o_enc.turn_count == 0 return "* A Sentinel locked on!"
         return choose(
-            "* SENTINEL: Intruder. Final warning.",
+            "* The Sentinel issues a final warning tone.",
             "* Its scan light tracks your every move.",
-            "* SENTINEL: You are not permitted here.",
-            "* SENTINEL: Scanning...",
+            "* The Sentinel flags your group as unauthorised.",
+            "* The Sentinel's scan light sweeps across the room.",
         )
     }
     target_calculation = ENC_TARGET.RANDOM
@@ -137,9 +137,9 @@ function enc_set_sentinel_cloudpuff() : enc_set() constructor {
     flavor     = function() {
         if o_enc.turn_count == 0 return "* A Sentinel and a Cloudpuff were patrolling together!"
         return choose(
-            "* SENTINEL: Remain in place.",
+            "* The Sentinel broadcasts a hold-position command.",
             "* The Cloudpuff has retreated behind the Sentinel.",
-            "* SENTINEL: The area is secured.",
+            "* The Sentinel reports the area as secure.",
             "* CLOUDPUFF: Fwff.",
         )
     }
