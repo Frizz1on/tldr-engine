@@ -511,6 +511,7 @@
     {"id":{"name":"room_palace7","path":"rooms/room_palace7/room_palace7.yy",},},
     {"id":{"name":"room_palace8","path":"rooms/room_palace8/room_palace8.yy",},},
     {"id":{"name":"room_palace9","path":"rooms/room_palace9/room_palace9.yy",},},
+    {"id":{"name":"room_palace10","path":"rooms/room_palace10/room_palace10.yy",},},
     {"id":{"name":"room_rotundaA_1","path":"rooms/room_rotundaA_1/room_rotundaA_1.yy",},},
     {"id":{"name":"room_save_select","path":"rooms/room_save_select/room_save_select.yy",},},
     {"id":{"name":"room_shop","path":"rooms/room_shop/room_shop.yy",},},
@@ -1584,6 +1585,7 @@
     {"roomId":{"name":"room_palace7_North","path":"rooms/room_palace7_North/room_palace7_North.yy",},},
     {"roomId":{"name":"room_palace8","path":"rooms/room_palace8/room_palace8.yy",},},
     {"roomId":{"name":"room_palace9","path":"rooms/room_palace9/room_palace9.yy",},},
+    {"roomId":{"name":"room_palace10","path":"rooms/room_palace10/room_palace10.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
