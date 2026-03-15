@@ -5,7 +5,12 @@ item_list = [
 	enc_set_virovirokun,
 	ex_enc_set_shadowguys,
     ex_enc_set_spawn,
-	enc_set_larry_berry,  
+	enc_set_larry_berry,
+	enc_set_cloudpuff,
+	enc_set_bloomguard,
+	enc_set_sentinel,
+	enc_set_bloomguard_cloudpuff,
+	enc_set_sentinel_cloudpuff
 ]
 // feel free to add your encounters to the item list
 

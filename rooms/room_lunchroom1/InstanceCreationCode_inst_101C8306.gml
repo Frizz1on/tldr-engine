@@ -1,0 +1,1 @@
+text = "* The leaves grant passage."

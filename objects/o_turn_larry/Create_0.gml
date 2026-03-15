@@ -1,12 +1,19 @@
-vent_inherited()
+event_inherited();
 
-timer_end        = 230
-pattern_pool     = ["sword_sweep", "alarm_burst"]
-allow_same_turns = false
+timer_end        = undefined; 
+allow_same_turns = true;
 
-// sword_sweep state
-sweep_dir   =  1    // +1 = left arc, -1 = right arc. Alternates each use.
-slash_count =  0
 
-// alarm_burst state
-burst_wave  =  0    // which wave we're on (0 or 1)
+pattern_pool = ["sword_sweep", "sword_stakes"];
+
+
+sweep_dir   = 1;
+slash_count = 0;
+
+
+stake_count  = 0;
+stake_x      = [];
+stake_inst   = [];
+stake_fired  = [];
+stakes_done  = false;
+

@@ -1,114 +1,157 @@
+event_inherited();
 
-event_inherited()
+if (!instance_exists(o_enc_box)) exit;
+if (!variable_struct_exists(enemy_struct, "actor_id")) exit;
+var o = enemy_struct.actor_id;
+if (!instance_exists(o)) exit;
 
-var o = o_actor_barry
+// o_enc_box.x/.y = CENTRE of the box
+var _bx  = o_enc_box.x;
+var _by  = o_enc_box.y;
+var _bhw = o_enc_box.width  * 0.5;
+var _bhh = o_enc_box.height * 0.5;
+var _bl  = _bx - _bhw;
+var _br  = _bx + _bhw;
+var _bt  = _by - _bhh;
+var _bb  = _by + _bhh;
 
-if pattern == "shield_wall" {
-
-    if timer == 6 {
-        o.shield_raise   = 2
-        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y())
-        o.depth          = o.depth_override
-        column_x_offset  = random_range(-15, 15)
+/// PHALANX RAIN
+if (pattern == "shield_wall") {
+    if (timer == 6) {
+        o.shield_raise   = 2;
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
+        o.depth          = o.depth_override;
+        volley_dir       = choose(-1, 1);  // +1 = fire left-to-right, -1 = right-to-left
+        column_timer     = 0;
     }
 
+    if (timer >= 12 && timer < 210) {
+        column_timer++;
+        // Fire rate starts slow and tightens slightly over time
+        var _fire_rate = 28 - min(8, timer div 55);
+        if (column_timer % _fire_rate == 0) {
+            var _volley = column_timer div _fire_rate;
 
-    if timer >= 12 && timer < timer_end - 30 {
-        column_timer++
+            // Alternating Y positions — two rows offset by half the spacing.
+            // This produces the zigzag ladder in the diagram:
+            //   even volleys:  upper row  (~33% down the box)
+            //   odd  volleys:  lower row  (~67% down the box)
+            // The player moves up/down to thread between them.
+            var _row_y = (_volley mod 2 == 0)
+                ? _bt + o_enc_box.height * 0.33
+                : _bt + o_enc_box.height * 0.67;
 
-        if column_timer % 30 == 0 {
-            // Shift the column position
-            column_x_offset += random_range(-20, 20)
-            column_x_offset  = clamp(column_x_offset, -30, 30)
+            // Spawn just outside the edge the attack fires from
+            var _spawn_x = (volley_dir > 0) ? _bl - 8 : _br + 8;
+            var _dir     = (volley_dir > 0) ? 0 : 180;   // 0 = right, 180 = left
 
-            var base_x = (o_enc_box.x + o_enc_box.sprite_w * 0.5) + column_x_offset
+            var _b = instance_create_depth(_spawn_x, _row_y,
+                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+            _b.direction   = _dir;
+            _b.speed       = random_range(3.5, 5);
+            _b.image_angle = _dir;
 
-            for (var b = 0; b < 5; b++) {
-                var inst = instance_create(
-                    o_enc_bullet,
-                    base_x + (b - 2) * 14,
-                    o_enc_box.y - 10,
-                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE
-                )
-                inst.direction   = 270
-                inst.speed       = 3.5
-                inst.image_angle = 270
-            }
+            // Flip firing side every 8 volleys so the attack doesn't always come from one side
+            if (_volley > 0 && _volley mod 8 == 0) volley_dir *= -1;
         }
     }
 
-    if timer >= timer_end - 28 {
-        o.shield_raise   = 0
-        o.depth_override = undefined
-        instance_destroy()
+    if (timer >= 230) {
+        o.shield_raise   = 0;
+        o.depth_override = undefined;
+        instance_destroy();
     }
 }
 
-
-else if pattern == "shield_crush" {
-
-    if timer == 6 {
-        o.shield_raise   = 1
-        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y())
-        o.depth          = o.depth_override
-
-        // Spawn the sliding shield-wall bullet off the appropriate side
-        var start_x = (crush_dir > 0)
-            ? o_enc_box.x - 60
-            : o_enc_box.x + o_enc_box.sprite_w + 60
-
-        var end_x = (crush_dir > 0)
-            ? o_enc_box.x + o_enc_box.sprite_w * 0.6    // leaves 40% open on right
-            : o_enc_box.x + o_enc_box.sprite_w * 0.4    // leaves 40% open on left
-
-        wall_inst = instance_create(
-            o_enc_bullet,
-            start_x,
-            o_enc_box.y + o_enc_box.sprite_h * 0.5,
-            DEPTH_ENCOUNTER.BULLETS_OUTSIDE,
-            { image_xscale: 3, image_yscale: 7 }
-        )
-        animate(start_x, end_x, 55, anime_curve.cubic_out, wall_inst, "x")
-       // audio_play(snd_berry_scrape)   // slow stone-scrape SFX
+/// BULLDOZER SWEEP
+else if (pattern == "shield_crush") {
+    if (timer == 6) {
+        wall_volley_row  = 0;
+        o.shield_raise   = 1;
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
+        o.depth          = o.depth_override;
+        var _start_x = (crush_dir > 0) ? _bl - 70 : _br + 70;
+        wall_inst = instance_create_depth(
+            _start_x, _by,
+            DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+        wall_inst.image_xscale = 3;
+        wall_inst.image_yscale = 7;
+        wall_inst.destroy      = false;
+        wall_inst.att          = 0;
+        wall_side = crush_dir;
+        alarm[1] = 28;
     }
-
-    // While the wall is closing, fire a volley of bullets on the open side
-    // — the safe zone is under pressure the whole time.
-    if timer >= 30 && timer < 145 && timer % 8 == 0 && volley_count < 14 {
-        var safe_x_min = (crush_dir > 0)
-            ? wall_inst.x + 10
-            : o_enc_box.x + 10
-        var safe_x_max = (crush_dir > 0)
-            ? o_enc_box.x + o_enc_box.sprite_w - 10
-            : wall_inst.x - 10
-        safe_x_min = max(safe_x_min, o_enc_box.x + 8)
-        safe_x_max = min(safe_x_max, o_enc_box.x + o_enc_box.sprite_w - 8)
-
-        var tx = safe_x_min + random(max(1, safe_x_max - safe_x_min))
-        var inst = instance_create(o_enc_bullet, tx, o_enc_box.y - 12, DEPTH_ENCOUNTER.BULLETS_OUTSIDE)
-        inst.direction   = 270
-        inst.speed       = 4.5
-        inst.image_angle = 270
-        volley_count++
+    if (timer >= 55 && timer < 175 && timer % 20 == 0) {
+        if (!instance_exists(wall_inst)) exit;
+        var _fire_dir = (wall_side > 0) ? 0 : 180;
+        var _spawn_x  = (wall_side > 0) ? _bl + 2 : _br - 2;
+        for (var _r = 0; _r < 3; _r++) {
+            if (_r == 1 && (wall_volley_row mod 2 == 0)) continue;
+            var _ry = _bt + 10 + _r * (_bhh * 0.85);
+            var _b  = instance_create_depth(_spawn_x, _ry,
+                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+            _b.direction   = _fire_dir + random_range(-6, 6);
+            _b.speed       = random_range(3, 4);
+            _b.image_angle = _fire_dir;
+        }
+        wall_volley_row++;
     }
-
-    // Wall retreats at ~frame 155
-    if timer == 155 && instance_exists(wall_inst) {
-        var retreat_x = (crush_dir > 0)
-            ? o_enc_box.x - 60
-            : o_enc_box.x + o_enc_box.sprite_w + 60
-        animate(wall_inst.x, retreat_x, 35, anime_curve.cubic_in, wall_inst, "x")
+    if (timer == 175 && instance_exists(wall_inst)) {
+        var _retreat_x = (crush_dir > 0) ? _bl - 70 : _br + 70;
+        animate(wall_inst.x, _retreat_x, 35, anime_curve.cubic_in, wall_inst, "x");
     }
-    if timer == 195 && instance_exists(wall_inst) {
-        instance_destroy(wall_inst)
-    }
-
-    if timer >= timer_end - 20 {
-        if instance_exists(wall_inst) instance_destroy(wall_inst)
-        o.shield_raise   = 0
-        o.depth_override = undefined
-        crush_dir       *= -1   // next use comes from the other side
-        instance_destroy()
+    if (timer == 215 && instance_exists(wall_inst))
+        instance_destroy(wall_inst);
+    if (timer >= 240) {
+        if (instance_exists(wall_inst)) instance_destroy(wall_inst);
+        o.shield_raise   = 0;
+        o.depth_override = undefined;
+        crush_dir        *= -1;
+        instance_destroy();
     }
 }
 
+/// HALF FLOOD (solo only — Other_12 prevents this when Larry is alive)
+else if (pattern == "half_flood") {
+    if (timer == 1) {
+        flash_half  = irandom(1);
+        flash_alpha = 0;
+        flash_phase = 0;
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
+        o.depth          = o.depth_override;
+    }
+    if (flash_phase == 0 || flash_phase == 2) {
+        var _base_t = (flash_phase == 0) ? timer : timer - 135;
+        flash_alpha = max(0, sine(1, _base_t * 0.16)) * 0.65;
+        if (timer == ((flash_phase == 0) ? 62 : 197)) { flash_alpha = 0; flash_phase++; }
+    }
+    if (flash_phase == 1 || flash_phase == 3) {
+        var _base_t = (flash_phase == 1) ? timer - 63 : timer - 198;
+        var _hx_min = (flash_half == 0) ? _bl : _bx;
+        var _hx_max = (flash_half == 0) ? _bx : _br;
+        if (_base_t >= 0 && _base_t < 55 && _base_t % 10 == 0) {
+            for (var _k = 0; _k < 2; _k++) {
+                var _b1 = instance_create_depth(
+                    random_range(_hx_min + 6, _hx_max - 6), _bt - 4,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _b1.direction = 270; _b1.speed = random_range(3.5, 5.5);
+                _b1.image_angle = 270;
+                var _b2 = instance_create_depth(
+                    random_range(_hx_min + 6, _hx_max - 6), _bb + 4,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _b2.direction = 90; _b2.speed = random_range(3.5, 5.5);
+                _b2.image_angle = 90;
+            }
+        }
+        if (timer == ((flash_phase == 1) ? 133 : 268)) {
+            flash_half  = 1 - flash_half;
+            flash_alpha = 0;
+            flash_phase = (flash_phase == 1) ? 2 : 4;
+        }
+    }
+    if (flash_phase == 4 || timer >= 280) {
+        flash_alpha      = 0;
+        o.depth_override = undefined;
+        instance_destroy();
+    }
+}

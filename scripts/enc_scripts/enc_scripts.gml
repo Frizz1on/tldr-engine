@@ -21,34 +21,33 @@ function enc_getparty_sprite(party_name, sprname) {
 /// @param {bool} [fatal]
 /// @param {string} [seed]
 function enc_hurt_enemy(target, hurt, user, sfx = undefined, fatal = false, seed = "") {
-	var enemy_struct = o_enc.encounter_data.enemies[target]
+    var enemy_struct = o_enc.encounter_data.enemies[target]
     hurt = round(hurt)
+    
+    if !is_struct(enemy_struct)
+        exit
+    if enemy_struct.hp <= 0 || !enc_enemy_isfighting(target)
+        exit
+    
     sfx ??= enemy_struct.hurt_sound
     
     if struct_exists(enemy_struct, "ev_hurt") && is_callable(enemy_struct.ev_hurt)
         enemy_struct.ev_hurt()
     
-    if !is_struct(enemy_struct)
-        exit
-    if enemy_struct.hp <= 0 || !enc_enemy_isfighting(target)
-		exit
-	enemy_struct.hp -= hurt
-	
-	var o = enemy_struct.actor_id
-	var txt = -hurt
+    enemy_struct.hp -= hurt
+    var o = enemy_struct.actor_id
+    var txt = -hurt
     
-	if hurt == 0
-		txt = "miss"
-	
-	if !instance_exists(o) 
-		exit
-	instance_create(o_text_hpchange, o.x, o.s_get_middle_y(), o.depth-100, {draw: txt, mode: TEXT_HPCHANGE_MODE.ENEMY, user: user,})
-	
-	if hurt > 0 {
-		if enemy_struct.hp <= 0 {
-			if fatal
-                enemy_struct.__fatal_defeat()
-			else if seed == "" {
+    if hurt <= 0
+        txt = "null"
+    if !instance_exists(o) 
+        exit
+    instance_create(o_text_hpchange, o.x, o.s_get_middle_y(), o.depth-100, {draw: txt, mode: TEXT_HPCHANGE_MODE.ENEMY, user: user,})
+    if hurt > 0 {
+        if enemy_struct.hp <= 0 {
+            if fatal
+                enemy_struct.__run_defeat()
+            else if seed == "" {
                 enemy_struct.__run_defeat()
                 
                 if !recruit_islost(enemy_struct) {
@@ -58,20 +57,19 @@ function enc_hurt_enemy(target, hurt, user, sfx = undefined, fatal = false, seed
                     })
                     recruit_lose(enemy_struct)
                 }
-			}
+            }
             else if seed == "freeze"
                 enemy_struct.__freeze_defeat()
-		}
-		else if enemy_struct.hp < enemy_struct.max_hp/2 && enemy_struct.low_hp_tired
+        } else if enemy_struct.hp < enemy_struct.max_hp/2 && enemy_struct.low_hp_tired
             enemy_struct.tired = true
         
         if instance_exists(o) 
-			o.hurt = 20
-		audio_play(sfx)
-		
-		animate(6, 0, 10, anime_curve.linear, o, "shake")
-	}
+            o.hurt = 20
+        audio_play(sfx)
+        animate(6, 0, 10, anime_curve.linear, o, "shake")
+    }
 }
+
 
 /// @desc adds to the mercy bar and spawns a text indicator
 /// @arg {real} target_index the index of the target enemy

@@ -2,8 +2,7 @@ function ex_enc_set_shadowguys() : enc_set() constructor {
 	debug_name	=	"shadowguys"
     
 	enemies = [
-		new ex_enemy_shadowguy(),
-		new ex_enemy_shadowguy(),
+		new enemy_berry(),
 	]
     
 	flavor = function() {

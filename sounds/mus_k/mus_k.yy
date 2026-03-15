@@ -10,7 +10,7 @@
   "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":106.184875,
+  "duration":117.53944,
   "exportDir":"",
   "name":"mus_k",
   "parent":{

@@ -1,1 +1,1 @@
-text = "* Thank you for visiting the TEST ZONE!"
+text = "* The tree leaves grant passage."

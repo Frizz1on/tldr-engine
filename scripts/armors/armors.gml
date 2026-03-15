@@ -50,9 +50,9 @@ function item_a_angel_sigil() : item_armor() constructor {
 	}
 	
 	reactions = {
-		kris: "That guy sold it.",
+		kris: "We found it.",
 		susie: "Who is she?",
-		ralsei: "Thats not a brooks student.",
+		ralsei: "What even is this?.",
 		noelle: "...",
 	}
     

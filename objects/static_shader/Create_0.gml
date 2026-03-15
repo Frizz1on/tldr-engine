@@ -1,4 +1,10 @@
-// Object165 Create Event
+// If Larry & Berry have already been defeated, the darkness has been lifted.
+// Destroy this instance immediately so the shader never activates.
+if (variable_struct_exists(global.save, "larry_berry_defeated")
+&&  global.save.larry_berry_defeated) {
+    instance_destroy();
+    exit;
+}
 
 application_surface_draw_enable(true);
 

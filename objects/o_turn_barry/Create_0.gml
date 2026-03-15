@@ -1,14 +1,22 @@
-event_inherited()
+event_inherited();
 
-timer_end        = 245   // Berry's turn is longer — she's patient
-pattern_pool     = ["shield_wall", "shield_crush"]
-allow_same_turns = false
+timer_end        = undefined;   
+allow_same_turns = true;
+
+
+pattern_pool = ["shield_wall", "shield_crush", "half_flood"];
 
 // shield_wall state
-column_timer = 0
-column_x_offset = 0   // shifts each column slightly to prevent pure memorisation
+column_timer = 0;
+volley_dir   = 1;
 
 // shield_crush state
-wall_inst     = noone
-volley_count  = 0
-crush_dir     = 1     // which side the sliding wall comes from
+wall_inst       = noone;
+wall_volley_row = 0;
+wall_side       = 1;
+crush_dir       = 1;
+
+// half_flood state
+flash_half  = 0;
+flash_alpha = 0;
+flash_phase = 0;

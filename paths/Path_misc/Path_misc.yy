@@ -1,0 +1,21 @@
+{
+  "$GMPath":"",
+  "%Name":"Path_misc",
+  "closed":true,
+  "kind":0,
+  "name":"Path_misc",
+  "parent":{
+    "name":"Paths",
+    "path":"folders/Paths.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":200.0,"y":380.0,},
+    {"speed":100.0,"x":200.0,"y":440.0,},
+    {"speed":100.0,"x":440.0,"y":440.0,},
+    {"speed":100.0,"x":440.0,"y":380.0,},
+    {"speed":100.0,"x":200.0,"y":380.0,},
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}

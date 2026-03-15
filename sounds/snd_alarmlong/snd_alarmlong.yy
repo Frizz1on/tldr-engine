@@ -7,10 +7,10 @@
   },
   "bitDepth":1,
   "channelFormat":0,
-  "compression":0,
+  "compression":3,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.8480499,
+  "duration":9.792018,
   "exportDir":"",
   "name":"snd_alarmlong",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_alarmlong.ogg",
+  "soundFile":"snd_alarmlong.mp3",
   "volume":1.0,
 }
