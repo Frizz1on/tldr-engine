@@ -1,0 +1,1 @@
+chest_money = 250

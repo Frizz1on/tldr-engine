@@ -3,7 +3,9 @@ timer_end        = undefined;
 allow_same_turns = true;
 pattern_pool     = ["laser_lock", "ping_cross"];
 
-lock_x = 0;
-warn_inst    = [];
-cross_warn_l = noone;
-cross_warn_r = noone;
+// laser_lock state
+lock_x    = 0;
+ray_insts = [];   // raycast line instances, destroyed when bullets fire
+
+// ping_cross state
+// (no persistent state needed — everything is computed per-frame)

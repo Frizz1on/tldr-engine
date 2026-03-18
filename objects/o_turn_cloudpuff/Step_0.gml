@@ -1,7 +1,6 @@
 event_inherited();
 if (!instance_exists(o_enc_box)) exit;
 if (!variable_struct_exists(enemy_struct, "actor_id")) exit;
-
 var o = enemy_struct.actor_id;
 if (!instance_exists(o)) exit;
 if (!instance_exists(o_enc_soul)) exit;
@@ -15,89 +14,109 @@ var _br  = _bx + _bhw;
 var _bt  = _by - _bhh;
 var _bb  = _by + _bhh;
 
-if (pattern == "gust_hunt") {
+/// THORN WAVE
+if (pattern == "thorn_wave") {
     if (timer == 1) {
         o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
         o.depth = o.depth_override;
+        wave_shift = 0;
     }
-
-    var _warn_times = [20, 52, 84];
-    for (var _i = 0; _i < array_length(_warn_times); _i++) {
-        var _tw = _warn_times[_i];
-        var _tf = _tw + 12;
-
-        if (timer == _tw) {
-            var _side = choose(0, 1, 2, 3);
-            if (_side == 0) {
-                warn_x = _bl - 10;
-                warn_y = clamp(o_enc_soul.y, _bt + 20, _bb - 20);
-            } else if (_side == 1) {
-                warn_x = _br + 10;
-                warn_y = clamp(o_enc_soul.y, _bt + 20, _bb - 20);
-            } else if (_side == 2) {
-                warn_x = clamp(o_enc_soul.x, _bl + 20, _br - 20);
-                warn_y = _bt - 10;
-            } else {
-                warn_x = clamp(o_enc_soul.x, _bl + 20, _br - 20);
-                warn_y = _bb + 10;
-            }
-
-            var _warn = instance_create_depth(warn_x, warn_y,
-                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-            _warn.speed = 0;
-            _warn.att = 0;
-            _warn.destroy = false;
-            _warn.image_xscale = 0.6;
-            _warn.image_yscale = 0.6;
-        }
-
-        if (timer == _tf) {
-            var _aim = point_direction(warn_x, warn_y, o_enc_soul.x, o_enc_soul.y);
-            for (var _s = -1; _s <= 1; _s++) {
-                var _b = instance_create_depth(warn_x, warn_y,
+    if (timer >= 20 && timer <= 136) {
+        var _local = (timer - 20) mod 24;
+        if (_local == 0) {
+            wave_xs = [];
+            wave_shift += random_range(-16, 16);
+            var _cols = 6;
+            for (var _i = 0; _i < _cols; _i++) {
+                var _x = _bl + o_enc_box.width * ((_i + 0.5) / _cols) + wave_shift;
+                _x = clamp(_x, _bl + 12, _br - 12);
+                array_push(wave_xs, _x);
+                var _w = instance_create_depth(_x, _bb + 8,
                     DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-                _b.direction   = _aim + _s * 10;
-                _b.speed       = 3.8 + (_i * 0.2);
-                _b.image_angle = _b.direction;
+                _w.speed = 0; _w.att = 0; _w.destroy = false;
+                _w.image_xscale = 0.55; _w.image_yscale = 0.55;
+                _w.alarm[0] = 13;   // self-destruct before next wave cycle
+            }
+        }
+        if (_local == 12) {
+            for (var _j = 0; _j < array_length(wave_xs); _j++) {
+                var _b = instance_create_depth(wave_xs[_j], _bb + 8,
+                    DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+                _b.direction = 90; _b.speed = 4.1; _b.image_angle = 90;
             }
         }
     }
-
-    if (timer >= 118) {
+    if (timer > 154) {
         o.depth_override = undefined;
         instance_destroy();
     }
 }
-else if (pattern == "light_gust") {
+
+/// THORN SNIPER
+else if (pattern == "thorn_sniper") {
     if (timer == 1) {
         o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
         o.depth = o.depth_override;
     }
-
-    if (timer == 24 || timer == 56) {
-        warn_x = clamp(o_enc_soul.x, _bl + 24, _br - 24);
-        warn_y = clamp(o_enc_soul.y, _bt + 24, _bb - 24);
-        var _w = instance_create_depth(warn_x, warn_y,
+    if (timer == 26 || timer == 62 || timer == 98) {
+        var _px = o_enc_soul.x + o_enc_soul.hspeed * 10;
+        var _py = o_enc_soul.y + o_enc_soul.vspeed * 10;
+        sniper_aim = point_direction(o.x, o.y, _px, _py);
+        var _warn = instance_create_depth(o.x, o.y,
             DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-        _w.speed = 0;
-        _w.att = 0;
-        _w.destroy = false;
-        _w.image_xscale = 0.7;
-        _w.image_yscale = 0.7;
+        _warn.speed = 0; _warn.att = 0; _warn.destroy = false;
+        _warn.image_xscale = 0.7; _warn.image_yscale = 0.7;
+        _warn.image_angle = sniper_aim; _warn.alarm[0] = 13;
+        // Raycast line
+        var _ray = instance_create_depth(o.x, o.y,
+            DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet_raycast);
+        _ray.ray_angle = sniper_aim; _ray.ray_length = 320;
+        _ray.ray_life = 12; _ray.ray_width = 1.5;
+        array_push(sniper_rays, _ray);
     }
-
-    if (timer == 36 || timer == 68) {
-        for (var _i2 = 0; _i2 < 6; _i2++) {
-            var _ang = (_i2 / 6) * 360;
-            var _b2 = instance_create_depth(warn_x, warn_y,
+    if (timer == 38 || timer == 74 || timer == 110) {
+        for (var _r = 0; _r < array_length(sniper_rays); _r++)
+            if instance_exists(sniper_rays[_r]) instance_destroy(sniper_rays[_r]);
+        sniper_rays = [];
+        for (var _k = -1; _k <= 1; _k++) {
+            var _b2 = instance_create_depth(o.x, o.y,
                 DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
-            _b2.direction   = _ang;
-            _b2.speed       = 3;
-            _b2.image_angle = _ang;
+            _b2.direction = sniper_aim + _k * 9;
+            _b2.speed = 4.5; _b2.image_angle = _b2.direction;
         }
     }
+    if (timer > 138) {
+        for (var _r = 0; _r < array_length(sniper_rays); _r++)
+            if instance_exists(sniper_rays[_r]) instance_destroy(sniper_rays[_r]);
+        o.depth_override = undefined;
+        instance_destroy();
+    }
+}
 
-    if (timer >= 88) {
+/// THORN BLOOM
+else if (pattern == "thorn_bloom") {
+    if (timer == 1) {
+        o.depth_override = DEPTH_ENCOUNTER.BULLETS_OUTSIDE - (o.y - guipos_y());
+        o.depth = o.depth_override;
+    }
+    if (timer == 24 || timer == 62 || timer == 100) {
+        bloom_x = clamp(o_enc_soul.x + random_range(-24, 24), _bl + 24, _br - 24);
+        bloom_y = clamp(o_enc_soul.y + random_range(-24, 24), _bt + 24, _bb - 24);
+        var _warn2 = instance_create_depth(bloom_x, bloom_y,
+            DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+        _warn2.speed = 0; _warn2.att = 0; _warn2.destroy = false;
+        _warn2.image_xscale = 0.8; _warn2.image_yscale = 0.8;
+        _warn2.alarm[0] = 13;
+    }
+    if (timer == 36 || timer == 74 || timer == 112) {
+        for (var _n = 0; _n < 10; _n++) {
+            var _dir = _n * 36;
+            var _b3 = instance_create_depth(bloom_x, bloom_y,
+                DEPTH_ENCOUNTER.BULLETS_OUTSIDE, o_enc_bullet);
+            _b3.direction = _dir; _b3.speed = 3.6; _b3.image_angle = _dir;
+        }
+    }
+    if (timer > 140) {
         o.depth_override = undefined;
         instance_destroy();
     }

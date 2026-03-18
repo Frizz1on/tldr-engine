@@ -1,0 +1,20 @@
+{
+  "$GMPath":"",
+  "%Name":"path_bloom",
+  "closed":true,
+  "kind":1,
+  "name":"path_bloom",
+  "parent":{
+    "name":"Paths",
+    "path":"folders/Paths.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":380.0,"y":620.0,},
+    {"speed":100.0,"x":600.0,"y":620.0,},
+    {"speed":100.0,"x":600.0,"y":700.0,},
+    {"speed":100.0,"x":380.0,"y":700.0,},
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}

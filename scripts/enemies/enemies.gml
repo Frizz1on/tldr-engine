@@ -361,7 +361,7 @@ function enemy_sentinel() : enemy() constructor {
                 encounter_scene_dialogue(
                     "* SENTINEL - ATK 10 DEF 3{s(10)}{br}{resetx}" +
                     "* An automated patrol drone. It has been watching this corridor{br}" +
-                    "for longer than it can calculate.{br}{resetx}" +
+                    "* for longer than it can calculate.{br}{resetx}",
                     "* It doesn't know what it's guarding anymore."
                 )
             }
@@ -374,7 +374,7 @@ function enemy_sentinel() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 40])
+                cutscene_func(enc_enemy_add_spare, [slot, 5])
                 cutscene_dialogue([
                     "{char(reggie, 1)}* Hey. Stand down.",
                     "* The Sentinel rotates to face Reggie.",
@@ -382,8 +382,8 @@ function enemy_sentinel() : enemy() constructor {
                     "* It keeps holding.",
                 ])
                 cutscene_dialogue(
-                    "* ...Command not recognised.{s(10)}{br}{resetx}" +
-                    "* But it stopped moving for a moment."
+                    "* ...Command not recognised.{s(10)}{br}{resetx}",
+					"{char(reggie, 1)}* Well it was worth a shot."
                 )
                 cutscene_set_variable(o_enc, "waiting", false)
                 cutscene_play()
@@ -422,14 +422,13 @@ function enemy_sentinel() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 55])
                 cutscene_func(function(u) {
                     var o = party_get_inst(u)
                     o.sprite_index = asset_get_index($"spr_b{u}_spell")
                 }, [user])
                 cutscene_dialogue([
-                    "{char(ralsei, 1)}* You've been here a long time, haven't you.",
-                    "{char(ralsei, 1)}* It's okay. You don't have to keep going.",
+                    "{char(ralsei, 1)}* Theres something exposed on the back!",
+                    "{char(ralsei, 1)}* Give me a sec.",
                 ])
                 cutscene_sleep(20)
                 cutscene_func(function(index) {
@@ -447,14 +446,18 @@ function enemy_sentinel() : enemy() constructor {
     acts_special = {
         susie: {
             exec: function(enemy_slot) {
-                enc_enemy_add_spare(enemy_slot, 20)
-                cutscene_dialogue("{char(reggie, 1)}* Just doing your job, huh. I get it.")
+                enc_enemy_add_spare(enemy_slot, 15)
+                cutscene_dialogue("{char(suise, 1)}* Who built this thing?")
             }
         },
         ralsei: {
             exec: function(enemy_slot) {
-                enc_enemy_add_spare(enemy_slot, 25)
-                cutscene_dialogue("{char(ralsei, 1)}* We're not a threat. Please, just let us through.")
+                enc_enemy_add_spare(enemy_slot, 5)
+                cutscene_dialogue("{char(ralsei, 1)}* Do I look like a threat to you?",
+				"{char(reggie, 1)}* ...",
+				"{char(susie, 1)}* ...",
+				"{char(ralsei, 1)}* Dont answer that.",
+				)
             }
         },
     }
@@ -464,19 +467,18 @@ function enemy_sentinel() : enemy() constructor {
         if me.mercy >= 100
             return array_shuffle([
                 "* Patrol suspended.",
-                "* The Sentinel hovers in place. Its light is soft.",
-                "* The Sentinel idles in standby mode.",
+                "* Whitelist updated.",
+                "* Entering standby.",
             ])[0]
         if me.hp < me.max_hp * 0.35
             return array_shuffle([
                 "* Warning: unit integrity is critically low.",
                 "* Secondary protocol engaged.",
-                "* The Sentinel blocks the route forward.",
             ])[0]
         return array_shuffle([
             "* Intruder detected.",
             "* Halt. This area is restricted.",
-            "* The Sentinel scans for movement.",
+            "* Scanning for movement.",
             "* Access denied.",
             "* Return to authorised zones.",
         ])[0]
@@ -515,8 +517,6 @@ function enemy_bloomguard() : enemy() constructor {
             exec: function() {
                 encounter_scene_dialogue(
                     "* BLOOMGUARD - ATK 9 DEF 5{s(10)}{br}{resetx}" +
-                    "* A large plant-based guardian that has been growing in the palace{br}" +
-                    "gardens for an indeterminate amount of time.{br}{resetx}" +
                     "* It looks after the other plants. It does not want you near them."
                 )
             }
@@ -529,11 +529,11 @@ function enemy_bloomguard() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 35])
                 cutscene_dialogue([
                     "{char(reggie, 1)}* You've got a lot of flowers. That's actually impressive.",
                     "* The Bloomguard rustles.",
                     "* Several petals open wider.",
+				 cutscene_func(enc_enemy_add_spare, [slot, 35])
                 ])
                 cutscene_dialogue("* The Bloomguard seems {col(c_lime)}pleased{col(w)}.")
                 cutscene_set_variable(o_enc, "waiting", false)
@@ -548,7 +548,6 @@ function enemy_bloomguard() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 45])
                 cutscene_dialogue([
                     "{char(susie, 1)}* Fine. Fine! I wasn't going near your plants.",
                     "{char(susie, 1)}* They're not even that impressive.",
@@ -556,6 +555,7 @@ function enemy_bloomguard() : enemy() constructor {
                     "{char(susie, 1)}* Okay they're a little impressive.",
                 ])
                 cutscene_dialogue("* The Bloomguard lowers its vines slightly.")
+				cutscene_func(enc_enemy_add_spare, [slot, 45])
                 cutscene_set_variable(o_enc, "waiting", false)
                 cutscene_play()
             }
@@ -568,16 +568,18 @@ function enemy_bloomguard() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 60])
+                
                 cutscene_func(function(u) {
                     var o = party_get_inst(u)
                     o.sprite_index = asset_get_index($"spr_b{u}_spell")
                 }, [user])
                 cutscene_dialogue([
-                    "{char(ralsei, 1)}* Oh— these ones are a bit wilted. May I?",
+                    "{char(ralsei, 1)}* Oh these ones are a bit wilted.",
                     "* The Bloomguard watches.",
-                    "* It does not stop him.",
+                    "* It does not stop her.",
+					
                 ])
+				cutscene_func(enc_enemy_add_spare, [slot, 60])
                 cutscene_sleep(20)
                 cutscene_func(function(index) {
                     enc_enemy_set_tired(index, true)
@@ -585,6 +587,12 @@ function enemy_bloomguard() : enemy() constructor {
                     instance_create(o_text_hpchange, __e_obj.x, __e_obj.s_get_middle_y(), __e_obj.depth - 100, { draw: "tired" })
                 }, [slot])
                 cutscene_dialogue("* The Bloomguard settles. It seems content.")
+				 cutscene_dialogue([
+                    "{char(susie, 1)}* Whats with you and putting your hands on things",
+                    "{char(ralsei, 1)}* Hey at least it worked!",
+                     "{char(susie, 1)}* You just wanted to see if it had food didnt you. ",
+					  "{char(ralsei, 1)}* No comment ",
+                ])
                 cutscene_set_partysprite(user, "idle")
                 cutscene_set_variable(o_enc, "waiting", false)
                 cutscene_play()
@@ -594,14 +602,12 @@ function enemy_bloomguard() : enemy() constructor {
     acts_special = {
         susie: {
             exec: function(enemy_slot) {
-                enc_enemy_add_spare(enemy_slot, 18)
-                cutscene_dialogue("{char(reggie, 1)}* Those thorns are something else.")
+                cutscene_dialogue("{char(susie, 1)}* Why do even the plants want to kill us?")
             }
         },
         susie: {
             exec: function(enemy_slot) {
-                enc_enemy_add_spare(enemy_slot, 22)
-                cutscene_dialogue("{char(susie, 1)}* I'm not touching anything, okay?")
+                cutscene_dialogue("{char(susie, 1)}* What is this?")
             }
         },
     }
@@ -610,22 +616,21 @@ function enemy_bloomguard() : enemy() constructor {
         var me = o_enc.encounter_data.enemies[slot]
         if me.mercy >= 100
             return array_shuffle([
-                "* The Bloomguard sways gently.",
-                "* Its thorns retract.",
+                "* (sways gently.)",
+                "* (Its thorns retract.)",
                 "* Several flowers have opened fully.",
             ])[0]
         if me.hp < me.max_hp * 0.35
             return array_shuffle([
-                "* BLOOMGUARD: You shouldn't have come here.",
-                "* The Bloomguard's flowers close tight.",
-                "* Its vines are trembling.",
+                "* You disgust me.",
+                "* (flowers close tight.)",
+                "* (Its vines are trembling.)",
             ])[0]
         return array_shuffle([
-            "* BLOOMGUARD: Stay back.",
-            "* BLOOMGUARD: This garden is not yours.",
-            "* The Bloomguard's thorns bristle.",
-            "* BLOOMGUARD: I warned you.",
-            "* BLOOMGUARD: Leave.",
+            "* Stay back.",
+            "* This garden is not yours.",
+            "*  I warned you.",
+            "*  Leave.",
         ])[0]
     }
 }
@@ -662,8 +667,7 @@ function enemy_cloudpuff() : enemy() constructor {
             exec: function() {
                 encounter_scene_dialogue(
                     "* CLOUDPUFF - ATK 7 DEF 0{s(10)}{br}{resetx}" +
-                    "* A wandering cloud creature native to the sky palace.{br}{resetx}" +
-                    "* It doesn't really want to fight.{br}{resetx}" +
+                    "* It doesn't want to fight.{br}{resetx}" ,
                     "* It just doesn't know what else to do when startled."
                 )
             }
@@ -678,7 +682,7 @@ function enemy_cloudpuff() : enemy() constructor {
                 cutscene_set_variable(o_enc, "waiting", true)
                 cutscene_func(enc_enemy_add_spare, [slot, 40])
                 cutscene_dialogue([
-                    "{char(reggie, 1)}* Hey. Easy. We're just passing through.",
+                    "{char(reggie, 1)}* Hey. Easy. We're just passing through." +
                     "* The Cloudpuff bobs.",
                     "* It bobs again, slower.",
                 ])
@@ -695,13 +699,14 @@ function enemy_cloudpuff() : enemy() constructor {
             exec: function(slot, user) {
                 cutscene_create()
                 cutscene_set_variable(o_enc, "waiting", true)
-                cutscene_func(enc_enemy_add_spare, [slot, 35])
+         
                 cutscene_dialogue([
-                    "{char(susie, 1)}* ...Okay. You know what. I'm just going to stand here.",
+                    "{char(susie, 1)}* ...Okay. You know what. I'm just going to stand here.", +
                     "* The Cloudpuff drifts closer.",
                     "{char(susie, 1)}* Oh. Hi.",
                 ])
                 cutscene_dialogue("* The Cloudpuff nuzzles Amari. Sort of.")
+				cutscene_func(enc_enemy_add_spare, [slot, 35])
                 cutscene_set_variable(o_enc, "waiting", false)
                 cutscene_play()
             }
@@ -717,7 +722,7 @@ function enemy_cloudpuff() : enemy() constructor {
                 cutscene_func(enc_enemy_add_spare, [slot, 60])
                 cutscene_dialogue([
                     "{char(ralsei, 1)}* ...",
-                    "* Ralsei hums something soft.",
+                    "* Kris hums something soft.",
                     "* The Cloudpuff's gusts slow to almost nothing.",
                 ])
                 cutscene_sleep(16)
@@ -737,7 +742,7 @@ function enemy_cloudpuff() : enemy() constructor {
         susie: {
             exec: function(enemy_slot) {
                 enc_enemy_add_spare(enemy_slot, 18)
-                cutscene_dialogue("{char(reggie, 1)}* You're not so bad.")
+                cutscene_dialogue("{char(susie, 1)}* You're not so bad.")
             }
         },
         ralsei: {
@@ -752,22 +757,18 @@ function enemy_cloudpuff() : enemy() constructor {
         var me = o_enc.encounter_data.enemies[slot]
         if me.mercy >= 100
             return array_shuffle([
-                "* The Cloudpuff drifts in place.",
-                "* It makes a very small, soft sound.",
-                "* The Cloudpuff has stopped gusting.",
+                "* You're not going to hurt me?.",
+                "* Friend?",
+                "* (blows softly.)",
             ])[0]
         if me.hp < me.max_hp * 0.35
             return array_shuffle([
-                "* The Cloudpuff looks miserable.",
-                "* It's raining slightly, just around it.",
-                "* CLOUDPUFF: ...pff.",
+                "* Please leave me alone",
+                "* I dont deserve this!",
+                "* That didnt hurt.",
             ])[0]
         return array_shuffle([
-            "* The Cloudpuff gusts nervously.",
-            "* CLOUDPUFF: Fwff!",
-            "* It doesn't want to be here either.",
-            "* CLOUDPUFF: ...",
-            "* The Cloudpuff swells and contracts.",
+            "* Where did you come from!",
         ])[0]
     }
 }
