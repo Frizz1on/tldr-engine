@@ -1,1 +1,1 @@
-target_count = 18;
+target_count = 30;
