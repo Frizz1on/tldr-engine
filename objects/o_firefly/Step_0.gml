@@ -2,15 +2,15 @@
 //  o_firefly — Step_0
 // ═══════════════════════════════════════════════════════════════════
 
-// Drift — slow arc with gentle wobble
-_drift_wobble_t += 0.018;
-var _wx = cos(_drift_wobble_t) * 0.3;   // wobble offset on drift direction
-x += lengthdir_x(_drift_speed, _drift_angle + _wx * 30);
-y += lengthdir_y(_drift_speed, _drift_angle + _wx * 15);
+// Drift — gentle arc with subtle wandering and occasional breeze pushes
+_drift_wobble_t += 0.026;
+var _wx = cos(_drift_wobble_t) * 0.45;  // wobble offset on drift direction
+x += lengthdir_x(_drift_speed, _drift_angle + _wx * 24);
+y += lengthdir_y(_drift_speed, _drift_angle + _wx * 14);
 
 // Occasionally nudge drift direction slightly
-if (irandom(180) == 0)
-    _drift_angle += random_range(-40, 40);
+if (irandom(120) == 0)
+    _drift_angle += random_range(-25, 25);
 
 // Pulse alpha — sine wave between _pulse_min and _pulse_max
 _pulse_t++;
