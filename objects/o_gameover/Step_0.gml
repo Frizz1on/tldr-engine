@@ -11,6 +11,8 @@ eye_yscale = 1 + sin(_eye_pulse_t * 0.7) * 0.025;
 var _gui_w = 640;
 var _gui_h = 480;
 var _dialogue_y = _gui_h * 0.45;
+var _dialogue_box_w = 540;
+var _dialogue_x = (_gui_w - _dialogue_box_w) * 0.5;
 
 // ── States 0-2: soul shatter ──────────────────────────────────────
 if (state < 3) {
@@ -73,7 +75,7 @@ if (state == 3) {
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id }
+            { gui: true, caller: id, max_width: _dialogue_box_w }
         );
         _death_line_index = 1;
     }
@@ -82,15 +84,13 @@ if (state == 3) {
     if (_is_first_death && !instance_exists(inst_dialogue) && _eye_phase == 1) {
         if (_death_line_index < array_length(_death_lines_first)) {
             var _line = _death_lines_first[_death_line_index];
-            draw_set_font(loc_font("main"));
-            var _dialogue_x = (_gui_w - string_width(_line)) * 0.5;
             inst_dialogue = text_typer_create(
                 _line,
                 _dialogue_x, _dialogue_y,
                 DEPTH_UI.DIALOGUE_UI,
                 "{preset(god_text)}{can_skip(false)}",
                 "{p}{e}",
-                { gui: true, caller: id }
+                { gui: true, caller: id, max_width: _dialogue_box_w }
             );
             _death_line_index++;
         } else {
@@ -130,7 +130,7 @@ if (state == 5 && selection == 0) {
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id }
+            { gui: true, caller: id, max_width: _dialogue_box_w }
         );
     }
     if (timer > 1 && !instance_exists(inst_dialogue)) {
@@ -154,7 +154,7 @@ if (state == 5 && selection == 1) {
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id }
+            { gui: true, caller: id, max_width: _dialogue_box_w }
         );
     }
     if (timer > 1 && !instance_exists(inst_dialogue)) {
