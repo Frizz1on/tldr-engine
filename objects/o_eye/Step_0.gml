@@ -112,7 +112,7 @@ switch (state) {
     case EYE_STATE.Q_DREAM_REACT:
         if state_timer == 1  _show_line("That's interesting.", 200);
         if state_timer == 80 {
-            // Invert the screen — white bg, black eye for personality questions
+
             inverted = true;
 
 			if (!audio_is_playing(mus_k))
