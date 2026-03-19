@@ -360,53 +360,71 @@ break;
 case EYE_STATE.FLOOD:
     flood_timer++;
 
-    // Eye stays visible throughout — do NOT fade it out
-    // It stretches and distorts instead
-    animate(eye_distort, 0.8, 90, anime_curve.cubic_in_out, id, "eye_distort");
+    // Placeholder rumble while flood text accelerates (replace with dedicated rumble SFX later)
+    if (flood_timer == 1 && flood_rumble_handle == -1) {
+        if (audio_is_playing(mus_drone))
+            audio_stop_sound(mus_drone);
+        flood_rumble_handle = audio_play(mus_drone, 1, 0.35, 0.8);
+    }
 
-    // Spawn rate starts fast and gets faster — overwhelm quickly
-    var _spawn_rate = max(1, 8 - flood_timer div 15);
+    // Eye stays visible and warps harder over time.
+    eye_distort = min(1.35, eye_distort + 0.01);
+    eye_xscale = 1 + eye_distort * 0.35 + sin(_eye_pulse_t * 1.4) * 0.06;
+    eye_yscale = 1 + eye_distort * 0.85 + sin(_eye_pulse_t * 1.9) * 0.08;
+
+    // Spawn rate starts very fast and escalates to overwhelming density.
+    var _spawn_rate = max(1, 4 - flood_timer div 25);
     if (flood_timer mod _spawn_rate == 0) {
         var _is_shiro = (_shiro_spawned < array_length(_shiro_lines)) && (irandom(8) == 0);
         _spawn_flood_line(_is_shiro);
-        // Spawn multiple per frame once it gets going
-        if (flood_timer > 60) _spawn_flood_line(false);
+        _spawn_flood_line(false);
+        if (flood_timer > 30)  _spawn_flood_line(false);
+        if (flood_timer > 60)  _spawn_flood_line(false);
+        if (flood_timer > 90)  _spawn_flood_line(false);
         if (flood_timer > 120) _spawn_flood_line(false);
-        if (flood_timer > 180) _spawn_flood_line(false);
+        if (flood_timer > 150) _spawn_flood_line(false);
     }
 
     // Move all flood lines
     for (var _i = 0; _i < array_length(flood_lines); _i++) {
         var _fl = flood_lines[_i];
-        _fl.y    += _fl.spd * (1 + flood_timer * 0.004);   // accelerates over time
-        _fl.alpha = min(1, _fl.alpha + 0.08);               // snap visible fast
-        _fl.rot  += random_range(-0.3, 0.3);
+        _fl.y    += _fl.spd * (1 + flood_timer * 0.006);
+        _fl.alpha = min(1, _fl.alpha + 0.14);
+        _fl.rot  += random_range(-0.65, 0.65);
     }
 
-    // Covered quickly — 60 lines is enough at this density
-    if (array_length(flood_lines) > 60 && flood_timer > 120)
+    // Once dense enough, begin whiteout.
+    if (array_length(flood_lines) > 120 && flood_timer > 80)
+        flood_covered = true;
+
+    if (flood_covered)
+        flood_cover_alpha = min(1, flood_cover_alpha + 0.028);
+
+    if (flood_cover_alpha >= 1)
         _goto_state(EYE_STATE.BLACKOUT);
 break;
 // ── BLACKOUT ──────────────────────────────────────────────────────
 case EYE_STATE.BLACKOUT:
     if (state_timer == 1) {
-        // Fade eye out now that the text has covered the screen
-        animate(eye_alpha, 0, 20, anime_curve.linear, id, "eye_alpha");
-        // White fade in — but destroy it immediately when done
-        global.__intro_flash = instance_create(o_flash, 0, 0, DEPTH_UI.FADER - 1);
-        global.__intro_flash.color       = c_white;
-        global.__intro_flash.image_alpha = 0;
-        animate(0, 1, 40, anime_curve.linear, global.__intro_flash, "image_alpha");
+        if (flood_rumble_handle != -1) {
+            audio_stop_sound(flood_rumble_handle);
+            flood_rumble_handle = -1;
+        }
     }
-    if (state_timer == 50)
+
+    flood_final_text_alpha = min(1, flood_final_text_alpha + 0.03);
+
+    if (state_timer >= 70) {
         _goto_state(EYE_STATE.TRANSITION);
+    }
 break;
 
 case EYE_STATE.TRANSITION:
     if (state_timer == 1) {
-        // Destroy the flash object immediately — the new room handles its own fade
-        if (instance_exists(global.__intro_flash))
-            instance_destroy(global.__intro_flash);
+        if (flood_rumble_handle != -1) {
+            audio_stop_sound(flood_rumble_handle);
+            flood_rumble_handle = -1;
+        }
         room_goto(target_room);
     }
 break;
