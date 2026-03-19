@@ -98,7 +98,7 @@ break;
 case EYE_STATE.CONTACT:
     if (state_timer == 10)  _show_line("Hello.", 200);
     if (state_timer == 100) _fade_out();
-    if (state_timer == 118) _show_line("Can you see me?", 200);
+    if (state_timer == 118) _show_line("You see me?", 200);
     if (state_timer == 210) _fade_out();
     if (state_timer == 228) _show_line("...", 200);
     if (state_timer == 300) _fade_out();
@@ -116,7 +116,7 @@ break;
 // ── Q_DREAM ───────────────────────────────────────────────────────
 case EYE_STATE.Q_DREAM:
     if (state_timer == 1) {
-        _show_line("Are you currently dreaming?", 190);
+        _show_line("Do you believe you are dreaming?", 190);
         _show_choice("YES", "NO");
     }
     if (choice_result != -1) {
@@ -186,9 +186,9 @@ break;
 
 // ── Q_VALUABLE ────────────────────────────────────────────────────
 case EYE_STATE.Q_VALUABLE:
-    if (state_timer == 30)  _show_line("If you found something valuable...", 200);
-    if (state_timer == 100) _show_line("Would you return it?", 220);
-    if (state_timer == 130) _show_choice("YES", "NO");
+    if (state_timer == 30)  _show_line("If you had something valuable", 200);
+    if (state_timer == 100) _show_line("Would you sell or keep it?", 220);
+    if (state_timer == 130) _show_choice("SELL", "KEEP");
     if (state_timer >= 130 && choice_result != -1) {
         global.eye_profile.return_valuable = (choice_result == 0);
         choice_result = -1;
@@ -200,8 +200,8 @@ break;
 // ── Q_KNOWLEDGE ───────────────────────────────────────────────────
 case EYE_STATE.Q_KNOWLEDGE:
     if (state_timer == 30)  _show_line("If you possessed rare knowledge...", 200);
-    if (state_timer == 100) _show_line("Would you share it?", 220);
-    if (state_timer == 130) _show_choice("YES", "NO");
+    if (state_timer == 100) _show_line("Would you teach it?", 220);
+    if (state_timer == 130) _show_choice("TEACH", "NO");
     if (state_timer >= 130 && choice_result != -1) {
         global.eye_profile.share_knowledge = (choice_result == 0);
         choice_result = -1;
@@ -230,8 +230,8 @@ break;
 
 // ── Q_ALIGNMENT ───────────────────────────────────────────────────
 case EYE_STATE.Q_ALIGNMENT:
-    if (state_timer == 30)  _show_line("Would you rather...", 200);
-    if (state_timer == 100) _show_line("...assist, or oppose?", 220);
+    if (state_timer == 30)  _show_line("Well then", 200);
+    if (state_timer == 100) _show_line("Would you rather assist, or oppose others?", 220);
     if (state_timer == 130) _show_choice("ASSIST", "OPPOSE");
     if (state_timer >= 130 && choice_result != -1) {
         global.eye_profile.alignment = (choice_result == 0) ? "assist" : "oppose";
@@ -381,75 +381,64 @@ case EYE_STATE.FINAL_PAUSE:
     }
 break;
 
-// ── FLOOD ─────────────────────────────────────────────────────────
 case EYE_STATE.FLOOD:
     flood_timer++;
 
-    // Placeholder rumble while flood text accelerates (replace with dedicated rumble SFX later)
-    if (flood_timer == 1 && flood_rumble_handle == -1) {
-        if (audio_is_playing(mus_drone))
-            audio_stop_sound(mus_drone);
-        flood_rumble_handle = audio_play(mus_drone, 1, 0.35, 0.8);
-    }
+    // Eye warps increasingly
+    eye_distort = min(1.35, eye_distort + 0.012);
+    eye_xscale  = 1 + eye_distort * 0.35 + sin(_eye_pulse_t * 1.4) * 0.06;
+    eye_yscale  = 1 + eye_distort * 0.85 + sin(_eye_pulse_t * 1.9) * 0.08;
 
-    // Eye stays visible and warps harder over time.
-    eye_distort = min(1.35, eye_distort + 0.01);
-    eye_xscale = 1 + eye_distort * 0.35 + sin(_eye_pulse_t * 1.4) * 0.06;
-    eye_yscale = 1 + eye_distort * 0.85 + sin(_eye_pulse_t * 1.9) * 0.08;
-
-    // Spawn rate starts very fast and escalates to overwhelming density.
-    var _spawn_rate = max(1, 4 - flood_timer div 25);
+    // 5x spawn volume — overwhelm fast then sustain for 5 extra seconds (300 frames)
+    var _spawn_rate = max(1, 4 - flood_timer div 30);
     if (flood_timer mod _spawn_rate == 0) {
         var _is_shiro = (_shiro_spawned < array_length(_shiro_lines)) && (irandom(8) == 0);
+        // Base 5 per tick, scaling up
         _spawn_flood_line(_is_shiro);
         _spawn_flood_line(false);
-        if (flood_timer > 30)  _spawn_flood_line(false);
-        if (flood_timer > 60)  _spawn_flood_line(false);
-        if (flood_timer > 90)  _spawn_flood_line(false);
-        if (flood_timer > 120) _spawn_flood_line(false);
-        if (flood_timer > 150) _spawn_flood_line(false);
+        _spawn_flood_line(false);
+        _spawn_flood_line(false);
+        _spawn_flood_line(false);
+        if (flood_timer > 30)  { _spawn_flood_line(false); _spawn_flood_line(false); }
+        if (flood_timer > 60)  { _spawn_flood_line(false); _spawn_flood_line(false); _spawn_flood_line(false); }
+        if (flood_timer > 90)  { _spawn_flood_line(false); _spawn_flood_line(false); _spawn_flood_line(false); }
+        if (flood_timer > 150) { _spawn_flood_line(false); _spawn_flood_line(false); }
     }
 
-    // Move all flood lines
+    // Move all lines
     for (var _i = 0; _i < array_length(flood_lines); _i++) {
         var _fl = flood_lines[_i];
-        _fl.y    += _fl.spd * (1 + flood_timer * 0.006);
+        _fl.y    += _fl.spd * (1 + flood_timer * 0.005);
         _fl.alpha = min(1, _fl.alpha + 0.14);
-        _fl.rot  += random_range(-0.65, 0.65);
+        _fl.rot  += random_range(-0.5, 0.5);
     }
 
-    // Once dense enough, begin whiteout.
-    if (array_length(flood_lines) > 120 && flood_timer > 80)
+    // Screen covered after enough lines and minimum 4 seconds (240 frames)
+    // Then hold for 5 more seconds (300 frames) before whiteout
+    if (array_length(flood_lines) > 80 && flood_timer > 240)
         flood_covered = true;
 
     if (flood_covered)
-        flood_cover_alpha = min(1, flood_cover_alpha + 0.028);
+        flood_cover_alpha = min(1, flood_cover_alpha + 0.018);  // slow fade to white
 
     if (flood_cover_alpha >= 1)
         _goto_state(EYE_STATE.BLACKOUT);
 break;
-// ── BLACKOUT ──────────────────────────────────────────────────────
 case EYE_STATE.BLACKOUT:
     if (state_timer == 1) {
         if (flood_rumble_handle != -1) {
             audio_stop_sound(flood_rumble_handle);
             flood_rumble_handle = -1;
         }
+        // Fade eye out now screen is white
+        animate(eye_alpha, 0, 20, anime_curve.linear, id, "eye_alpha");
     }
-
-    flood_final_text_alpha = min(1, flood_final_text_alpha + 0.03);
-
-    if (state_timer >= 70) {
+    if (state_timer >= 60)
         _goto_state(EYE_STATE.TRANSITION);
-    }
 break;
 
 case EYE_STATE.TRANSITION:
     if (state_timer == 1) {
-        if (flood_rumble_handle != -1) {
-            audio_stop_sound(flood_rumble_handle);
-            flood_rumble_handle = -1;
-        }
         room_goto(target_room);
     }
 break;

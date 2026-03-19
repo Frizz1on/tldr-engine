@@ -8,7 +8,10 @@ draw_rectangle(0, 0, _gw, _gh, false);
 
 // FLOOD / BLACKOUT: draw all flood lines
 if (state == EYE_STATE.FLOOD || state == EYE_STATE.BLACKOUT) {
-    // Eye remains present and warping during the flood.
+    var _gw = display_get_gui_width();
+    var _gh = display_get_gui_height();
+
+    // Eye warps during flood
     if (eye_alpha > 0) {
         draw_set_color(fg_color);
         draw_set_alpha(eye_alpha);
@@ -22,9 +25,12 @@ if (state == EYE_STATE.FLOOD || state == EYE_STATE.BLACKOUT) {
         draw_ellipse(_f_ex - 10, _f_ey - 10, _f_ex + 10, _f_ey + 10, false);
     }
 
+    // Flood text — clamped to GUI bounds
     draw_set_font(loc_font("main"));
     for (var _i = 0; _i < array_length(flood_lines); _i++) {
         var _fl = flood_lines[_i];
+        // Only draw if within or near screen
+        if (_fl.y < -60 || _fl.y > _gh + 60) continue;
         draw_set_color(_fl.col);
         draw_set_alpha(_fl.alpha);
         var _tw = string_width(_fl.text) * _fl.scale;
@@ -37,18 +43,11 @@ if (state == EYE_STATE.FLOOD || state == EYE_STATE.BLACKOUT) {
         );
     }
 
+    // White overlay fades in
     if (flood_cover_alpha > 0) {
-        draw_set_alpha(flood_cover_alpha);
         draw_set_color(c_white);
+        draw_set_alpha(flood_cover_alpha);
         draw_rectangle(0, 0, _gw, _gh, false);
-    }
-
-    if (state == EYE_STATE.BLACKOUT) {
-        draw_set_font(loc_font("main"));
-        draw_set_alpha(flood_final_text_alpha);
-        draw_set_color(c_black);
-        var _ftw = string_width(flood_final_text);
-        draw_text(_gw * 0.5 - _ftw * 0.5, _gh * 0.5 - 12, flood_final_text);
     }
 
     draw_set_alpha(1);
