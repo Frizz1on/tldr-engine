@@ -8,8 +8,8 @@ else
     eye_twitch = lerp(eye_twitch, 0, 0.15);
 eye_yscale = 1 + sin(_eye_pulse_t * 0.7) * 0.025;
 
-var _gui_w = display_get_gui_width();
-var _gui_h = display_get_gui_height();
+var _gui_w = 640;
+var _gui_h = 480;
 var _dialogue_y = _gui_h * 0.45;
 
 // ── States 0-2: soul shatter ──────────────────────────────────────
