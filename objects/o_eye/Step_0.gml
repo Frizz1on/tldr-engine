@@ -57,7 +57,32 @@ if (choice_visible) {
 // ── STATE MACHINE ─────────────────────────────────────────────────
 // Line swap rhythm: fade_out at T, show_line at T+18, next beat >= T+50
 // Question gaps: ~90 frames between each question
-
+if (keyboard_check_pressed(vk_end) && state != EYE_STATE.Q_FINAL
+&&  state != EYE_STATE.FLOOD
+&&  state != EYE_STATE.BLACKOUT
+&&  state != EYE_STATE.TRANSITION) {
+    choice_visible = false;
+    input_active   = false;
+    codename_active = false;
+    line_alpha     = 0;
+    inverted       = false;
+    _inv_progress  = 0;
+    eye_distort    = 0;
+    // Fill in placeholder profile values so nothing downstream breaks
+    if (is_undefined(global.eye_profile.dream_aware))    global.eye_profile.dream_aware     = false;
+    if (is_undefined(global.eye_profile.fav_color))      global.eye_profile.fav_color        = "SKIP";
+    if (is_undefined(global.eye_profile.fav_hobby))      global.eye_profile.fav_hobby        = "SKIP";
+    if (is_undefined(global.eye_profile.fav_food))       global.eye_profile.fav_food         = "SKIP";
+    if (is_undefined(global.eye_profile.return_valuable)) global.eye_profile.return_valuable = false;
+    if (is_undefined(global.eye_profile.share_knowledge)) global.eye_profile.share_knowledge = false;
+    if (is_undefined(global.eye_profile.heroic))         global.eye_profile.heroic           = false;
+    if (is_undefined(global.eye_profile.alignment))      global.eye_profile.alignment        = "SKIP";
+    if (is_undefined(global.eye_profile.teamwork))       global.eye_profile.teamwork         = false;
+    if (is_undefined(global.eye_profile.refusal_name))   global.eye_profile.refusal_name     = "SKIP";
+    if (is_undefined(global.eye_profile.meta_aware))     global.eye_profile.meta_aware       = false;
+    if (is_undefined(global.eye_profile.codename))       global.eye_profile.codename         = "DEV";
+    _goto_state(EYE_STATE.FINAL_PAUSE);
+}
 switch (state) {
 
 // ── BOOT ──────────────────────────────────────────────────────────
