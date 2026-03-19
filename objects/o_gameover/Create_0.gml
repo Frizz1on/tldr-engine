@@ -14,8 +14,6 @@ image_alpha    = 0;
 
 // Eye visual state
 eye_alpha    = 0;
-eye_x        = 320;
-eye_y        = 160;
 eye_xscale   = 1;
 eye_yscale   = 1;
 eye_twitch   = 0;
