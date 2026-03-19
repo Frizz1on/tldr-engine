@@ -43,8 +43,11 @@ if (eye_alpha > 0) {
 }
 
 // MAIN LINE TEXT
-var _ly = variable_instance_exists(id, "line_y") ? line_y : 200;
+var _ly = 200;
+if (variable_instance_exists(id, "line_y") && is_real(line_y))
+    _ly = line_y;
 if (variable_instance_exists(id, "line_text")
+&&  is_string(line_text)
 &&  string_length(line_text) > 0
 &&  variable_instance_exists(id, "line_alpha")
 &&  line_alpha > 0) {
