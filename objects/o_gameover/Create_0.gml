@@ -33,7 +33,7 @@ global.eye_deaths++;
 _death_lines_first = [
     "It seems a horrible fate has befallen you.",
     "Do not worry, for I have given you endless chances.",
-    "My love will become yours.",
+    "I gave you my love after all.",
 ];
 _death_line_index = 0;
 
