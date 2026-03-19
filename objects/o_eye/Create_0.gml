@@ -26,31 +26,33 @@ global.eye_profile = {
 // ── State machine ─────────────────────────────────────────────────
 // States: each maps to a phase of the sequence
 enum EYE_STATE {
-    BOOT,           // pure black, no eye yet
-    EYE_FADEIN,     // eye fades in
-    CONTACT,        // "Hello. Can you see me? Good."
-    UNEASE,         // "I need to understand you. Tell me."
-    Q_DREAM,        // ARE YOU DREAMING — yes/no
-    Q_DREAM_REACT,  // "That's interesting." + eye distorts
-    Q_COLOR,        // text input: favourite colour
-    Q_HOBBY,        // text input: favourite hobby
-    Q_FOOD,         // text input: favourite food
-    MORAL_SHIFT,    // eye grows, tone shifts
-    Q_VALUABLE,     // return/keep/sell
-    Q_KNOWLEDGE,    // share/withhold
-    Q_HEROIC,       // yes/no
-    Q_ALIGNMENT,    // assist/oppose (only if not heroic)
-    Q_TEAMWORK,     // yes/no
-    Q_REFUSAL,      // text: who would you refuse
-    META_PAUSE,     // long pause, eye stops
-    Q_META,         // are your choices your own — yes/no
-    Q_META_REACT,   // silence, no response
-    Q_CODENAME,     // naming menu
-    FINAL_PAUSE,    // everything still
-    Q_FINAL,        // will you accept everything
-    FLOOD,          // ACCEPT EVERYTHING fills screen
-    BLACKOUT,       // solid text-black
-    TRANSITION,     // flash and room change
+    BOOT,
+    EYE_FADEIN,
+    CONTACT,
+    UNEASE,
+    Q_DREAM,
+    Q_DREAM_REACT,
+    Q_COLOR,
+    Q_HOBBY,
+    Q_FOOD,
+    MORAL_SHIFT,
+    Q_VALUABLE,
+    Q_KNOWLEDGE,
+    Q_HEROIC_LEAD,     // NEW
+    Q_HEROIC,
+    Q_ALIGNMENT_LEAD,  // NEW
+    Q_ALIGNMENT,
+    Q_TEAMWORK,
+    Q_REFUSAL,
+    META_PAUSE,
+    Q_META,
+    Q_META_REACT,
+    Q_CODENAME,
+    FINAL_PAUSE,
+    Q_FINAL,
+    FLOOD,
+    BLACKOUT,
+    TRANSITION,
 }
 
 state       = EYE_STATE.BOOT;
@@ -113,6 +115,20 @@ _shiro_lines = [
 ];
 _shiro_spawned = 0;
 
+
+codename_active   = false;
+codename_string   = "";
+codename_maxlen   = 8;
+codename_row      = 0;
+codename_col      = 0;
+codename_done     = false;
+
+codename_keyboard = [
+    ["A","B","C","D","E","F","G","H","I","J"],
+    ["K","L","M","N","O","P","Q","R","S","T"],
+    ["U","V","W","X","Y","Z","DEL","END"],
+];
+
 // ── Questions list — processed in sequence ───────────────────────
 // Built as a simple ordered array of state transitions
 // (see Step_0 for the state machine logic)
@@ -125,40 +141,27 @@ keyboard_string = "";
 //  HELPER FUNCTIONS (defined as methods on this instance)
 // ════════════════════════════════════════════════════════════════════
 
-// Set line text with fade-in
+
+// Instantly set new text and fade it in
 _show_line = method(self, function(txt, target_y = 200) {
     line_text  = txt;
     line_alpha = 0;
     line_y     = target_y;
-    animate(0, 1, 25, anime_curve.linear, id, "line_alpha");
+    animate(0, 1, 22, anime_curve.linear, id, "line_alpha");
 });
 
-// Fade line out then in with new text
-_swap_line = method(self, function(txt, target_y = 200) {
-    var _self = id;
-    var _a = animate(line_alpha, 0, 12, anime_curve.linear, id, "line_alpha");
-    // After fade out, swap text and fade back in
-    call_later(14, time_source_units_frames, method(_self, function(txt, target_y) {
-        line_text = txt;
-        line_y    = target_y;
-        animate(0, 1, 20, anime_curve.linear, id, "line_alpha");
-    }), false, [txt, target_y]);
+// Fade current text out, swap, fade in — synchronous, no call_later
+// Call this then check state_timer >= t + 38 before showing next line
+_fade_out = method(self, function() {
+    animate(line_alpha, 0, 14, anime_curve.linear, id, "line_alpha");
 });
 
-// Advance state after a delay
-_goto_state = method(self, function(new_state, delay = 0) {
-    if delay == 0 {
-        state = new_state;
-        state_timer = 0;
-    } else {
-        _next_state = new_state;
-        call_later(delay, time_source_units_frames, method(self, function() {
-            state = _next_state;
-            state_timer = 0;
-            _next_state = -1;
-        }));
-    }
+// _goto_state: NEVER use delay — always use state_timer in the state itself
+_goto_state = method(self, function(new_state) {
+    state       = new_state;
+    state_timer = 0;
 });
+    
 
 // Show a yes/no choice
 _show_choice = method(self, function(label_a = "YES", label_b = "NO") {

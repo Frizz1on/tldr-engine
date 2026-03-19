@@ -103,5 +103,48 @@ if (variable_instance_exists(id, "input_active") && input_active) {
     }
 }
 
+if (variable_instance_exists(id, "codename_active") && codename_active) {
+    draw_set_font(loc_font("main"));
+
+    var _gw  = display_get_gui_width();
+    var _kx  = 80;    // keyboard left edge
+    var _ky  = 250;   // keyboard top edge
+    var _spx = 26;    // horizontal spacing
+    var _spy = 32;    // vertical spacing
+
+    // Draw entered name
+    draw_set_color(fg_color);
+    draw_set_alpha(1);
+    var _name_disp = codename_string + ((state_timer mod 40 < 20) ? "_" : "");
+    var _nw = string_width(_name_disp) * 2;
+    draw_text_transformed(_gw * 0.5 - _nw * 0.5, 210, _name_disp, 2, 2, 0);
+
+    // Draw keyboard rows
+    for (var _r = 0; _r < array_length(codename_keyboard); _r++) {
+        var _row = codename_keyboard[_r];
+        for (var _c = 0; _c < array_length(_row); _c++) {
+            var _kkey   = _row[_c];
+            var _kx_pos = _kx + _c * _spx;
+            var _ky_pos = _ky + _r * _spy;
+            var _sel    = (_r == codename_row && _c == codename_col);
+
+            draw_set_color(fg_color);
+            draw_set_alpha(_sel ? 1 : 0.4);
+            draw_text(_kx_pos, _ky_pos, _kkey);
+
+            // Soul indicator above selected key
+            if (_sel) {
+                draw_set_alpha(1);
+                draw_ellipse(
+                    _kx_pos + string_width(_kkey) * 0.5 - 3, _ky_pos - 10,
+                    _kx_pos + string_width(_kkey) * 0.5 + 3, _ky_pos - 4,
+                    false
+                );
+            }
+        }
+    }
+    draw_set_alpha(1);
+}
+
 draw_set_alpha(1);
 draw_set_color(c_white);
