@@ -66,6 +66,8 @@ if (state == 3) {
         var _line = _is_first_death
             ? _death_lines_first[0]
             : array_shuffle(_death_quotes_repeat)[0];
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_line)) * 0.5;
 
         inst_dialogue = text_typer_create(
             _line,
@@ -120,6 +122,8 @@ if (state == 5 && selection == 0) {
     if (ui_alpha > 0) ui_alpha -= 0.05;
     if (timer == 1) {
         music_stop(0);
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_retry_line)) * 0.5;
         inst_dialogue = text_typer_create(
             _retry_line,
             _dialogue_x, _dialogue_y,
@@ -142,6 +146,8 @@ if (state == 5 && selection == 1) {
     image_alpha = 0;
     if (timer == 1) {
         music_stop(0);
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_give_up_line)) * 0.5;
         inst_dialogue = text_typer_create(
             _give_up_line,
             _dialogue_x, _dialogue_y,
