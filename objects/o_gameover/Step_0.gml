@@ -8,6 +8,14 @@ else
     eye_twitch = lerp(eye_twitch, 0, 0.15);
 eye_yscale = 1 + sin(_eye_pulse_t * 0.7) * 0.025;
 
+var _gui_w = display_get_gui_width();
+var _gui_h = display_get_gui_height();
+var _dialogue_y = _gui_h * 0.45;
+var _dialogue_x = function(_text) {
+    draw_set_font(loc_font("main"));
+    return (_gui_w - string_width(_text)) * 0.5;
+};
+
 // ── States 0-2: soul shatter ──────────────────────────────────────
 if (state < 3) {
     if (timer == 30)  state = 1;
@@ -53,8 +61,6 @@ if (state == 2) {
 
 // ── State 3: eye speaks ───────────────────────────────────────────
 if (state == 3) {
-    var _cx = display_get_gui_width() * 0.5;
-
     if (!dia_created) {
         dia_created = true;
         _eye_phase  = 1;
@@ -65,11 +71,11 @@ if (state == 3) {
 
         inst_dialogue = text_typer_create(
             _line,
-            _cx, 300,
+            _dialogue_x(_line), _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id, center_x: true }
+            { gui: true, caller: id }
         );
         _death_line_index = 1;
     }
@@ -77,13 +83,14 @@ if (state == 3) {
     // First death: cycle through all three lines
     if (_is_first_death && !instance_exists(inst_dialogue) && _eye_phase == 1) {
         if (_death_line_index < array_length(_death_lines_first)) {
+            var _line = _death_lines_first[_death_line_index];
             inst_dialogue = text_typer_create(
-                _death_lines_first[_death_line_index],
-                _cx, 300,
+                _line,
+                _dialogue_x(_line), _dialogue_y,
                 DEPTH_UI.DIALOGUE_UI,
                 "{preset(god_text)}{can_skip(false)}",
                 "{p}{e}",
-                { gui: true, caller: id, center_x: true }
+                { gui: true, caller: id }
             );
             _death_line_index++;
         } else {
@@ -117,11 +124,11 @@ if (state == 5 && selection == 0) {
         music_stop(0);
         inst_dialogue = text_typer_create(
             _retry_line,
-            display_get_gui_width() * 0.5, 300,
+            _dialogue_x(_retry_line), _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id, center_x: true }
+            { gui: true, caller: id }
         );
     }
     if (timer > 1 && !instance_exists(inst_dialogue)) {
@@ -139,11 +146,11 @@ if (state == 5 && selection == 1) {
         music_stop(0);
         inst_dialogue = text_typer_create(
             _give_up_line,
-            display_get_gui_width() * 0.5, 300,
+            _dialogue_x(_give_up_line), _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
-            { gui: true, caller: id, center_x: true }
+            { gui: true, caller: id }
         );
     }
     if (timer > 1 && !instance_exists(inst_dialogue)) {
