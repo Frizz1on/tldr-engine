@@ -83,16 +83,23 @@ if (variable_instance_exists(id, "choice_visible") && choice_visible) {
 if (variable_instance_exists(id, "input_active") && input_active) {
     draw_set_font(loc_font("main"));
     draw_set_color(fg_color);
+
     var _cursor  = (state_timer mod 40 < 20) ? "|" : "";
     var _disp    = input_string + _cursor;
     var _tw      = string_width(_disp);
+
     draw_set_alpha(1);
-    draw_text(_gw * 0.5 - _tw * 0.5, _ly + 40, _disp);
+    draw_text(_gw * 0.5 - _tw * 0.5, _ly + 36, _disp);
+
+    if (variable_instance_exists(id, "input_hint") && is_string(input_hint) && string_length(input_hint) > 0) {
+        draw_set_alpha(0.55);
+        draw_text(_gw * 0.5 - string_width(input_hint) * 0.5, _ly + 62, input_hint);
+    }
 
     if (variable_instance_exists(id, "state") && state == EYE_STATE.Q_REFUSAL) {
         draw_set_alpha(0.4);
         var _sub = "They will not hear.";
-        draw_text(_gw * 0.5 - string_width(_sub) * 0.5, _ly + 65, _sub);
+        draw_text(_gw * 0.5 - string_width(_sub) * 0.5, _ly + 84, _sub);
     }
 }
 

@@ -46,7 +46,15 @@ if input_active {
 if choice_visible {
     if InputPressed(INPUT_VERB.LEFT) || InputPressed(INPUT_VERB.RIGHT)
         choice_selection = 1 - choice_selection;
-    if InputPressed(INPUT_VERB.SELECT) {
+
+    var _choice_confirm = InputPressed(INPUT_VERB.SELECT)
+        || InputPressed(INPUT_VERB.INTERACT)
+        || keyboard_check_pressed(vk_enter)
+        || keyboard_check_pressed(vk_return)
+        || keyboard_check_pressed(vk_space)
+        || keyboard_check_pressed(ord("Z"));
+
+    if _choice_confirm {
         choice_result  = choice_selection;
         choice_visible = false;
     }
@@ -117,8 +125,8 @@ switch (state) {
 
 			if (!audio_is_playing(mus_k))
 			audio_play(mus_k, 0, 1, 1, 0);
-            _swap_line("What is your favourite colour?", 160);
-            _begin_input("favourite colour", 20);
+            _show_line("What is your favourite colour?", 228);
+            _begin_input("favourite colour", 20, "Begin typing, then press Enter.");
             _goto_state(EYE_STATE.Q_COLOR);
         }
     break;
@@ -127,8 +135,8 @@ switch (state) {
     case EYE_STATE.Q_COLOR:
         if !input_active && string_length(input_string) > 0 {
             global.eye_profile.fav_color = input_string;
-            _swap_line("What do you enjoy doing?", 160);
-            _begin_input("hobby", 30);
+            _show_line("What do you enjoy doing?", 228);
+            _begin_input("hobby", 30, "Begin typing, then press Enter.");
             _goto_state(EYE_STATE.Q_HOBBY, 18);
         }
     break;
@@ -136,8 +144,8 @@ switch (state) {
     case EYE_STATE.Q_HOBBY:
         if !input_active && string_length(input_string) > 0 {
             global.eye_profile.fav_hobby = input_string;
-            _swap_line("What is your favourite food?", 160);
-            _begin_input("food", 20);
+            _show_line("What is your favourite food?", 228);
+            _begin_input("food", 20, "Begin typing, then press Enter.");
             _goto_state(EYE_STATE.Q_FOOD, 18);
         }
     break;
@@ -153,9 +161,9 @@ switch (state) {
     break;
 
     case EYE_STATE.MORAL_SHIFT:
-        if state_timer == 1  _show_line("If you found something valuable...", 180);
+        if state_timer == 1  _show_line("If you found something valuable...", 220);
         if state_timer == 70 {
-            _swap_line("Would you return it?", 200);
+            _show_line("Would you return it?", 240);
             _show_choice("YES", "NO");
             _goto_state(EYE_STATE.Q_VALUABLE);
         }
@@ -165,9 +173,9 @@ switch (state) {
         if choice_result != -1 {
             global.eye_profile.return_valuable = (choice_result == 0);
             choice_result = -1;
-            _show_line("If you possessed rare knowledge...", 170);
+            _show_line("If you possessed rare knowledge...", 220);
             call_later(60, time_source_units_frames, method(self, function() {
-                _swap_line("Would you share it?", 200);
+                _show_line("Would you share it?", 240);
                 _show_choice("YES", "NO");
             }));
             _goto_state(EYE_STATE.Q_KNOWLEDGE, 60);
@@ -178,9 +186,9 @@ switch (state) {
         if choice_result != -1 {
             global.eye_profile.share_knowledge = (choice_result == 0);
             choice_result = -1;
-            _show_line("Do you consider yourself...", 180);
+            _show_line("Do you consider yourself...", 220);
             call_later(60, time_source_units_frames, method(self, function() {
-                _swap_line("...heroic?", 200);
+                _show_line("...heroic?", 240);
                 _show_choice("YES", "NO");
             }));
             _goto_state(EYE_STATE.Q_HEROIC, 60);
@@ -193,15 +201,15 @@ switch (state) {
             choice_result = -1;
             if !global.eye_profile.heroic {
                 // Ask alignment only if not heroic
-                _show_line("Would you rather...", 180);
+                _show_line("Would you rather...", 220);
                 call_later(50, time_source_units_frames, method(self, function() {
-                    _swap_line("...assist, or oppose?", 200);
+                    _show_line("...assist, or oppose?", 240);
                     _show_choice("ASSIST", "OPPOSE");
                 }));
                 _goto_state(EYE_STATE.Q_ALIGNMENT, 50);
             } else {
                 global.eye_profile.alignment = "heroic";
-                _show_line("Are you good at working with others?", 200);
+                _show_line("Are you good at working with others?", 240);
                 _show_choice("YES", "NO");
                 _goto_state(EYE_STATE.Q_TEAMWORK);
             }
@@ -212,7 +220,7 @@ switch (state) {
         if choice_result != -1 {
             global.eye_profile.alignment = (choice_result == 0) ? "assist" : "oppose";
             choice_result = -1;
-            _show_line("Are you good at working with others?", 200);
+            _show_line("Are you good at working with others?", 240);
             _show_choice("YES", "NO");
             _goto_state(EYE_STATE.Q_TEAMWORK);
         }
@@ -222,11 +230,11 @@ switch (state) {
         if choice_result != -1 {
             global.eye_profile.teamwork = (choice_result == 0);
             choice_result = -1;
-            _show_line("Is there anyone you would refuse to work with?", 160);
+            _show_line("Is there anyone you would refuse to work with?", 220);
             call_later(20, time_source_units_frames, method(self, function() {
                 // Add the invasive subtext
             }));
-            _begin_input("name", 30);
+            _begin_input("name", 30, "Begin typing, then press Enter.");
             _goto_state(EYE_STATE.Q_REFUSAL, 20);
         }
     break;
@@ -247,10 +255,10 @@ switch (state) {
         // Eye is frozen. Long silence.
         if state_timer == 1  _show_line("", 200);
         if state_timer == 90 {
-            _show_line("Are you aware...", 180);
+            _show_line("Are you aware...", 220);
         }
         if state_timer == 160 {
-            _swap_line("...that your choices are not your own?", 200);
+            _show_line("...that your choices are not your own?", 240);
             _show_choice("YES", "NO");
             _goto_state(EYE_STATE.Q_META);
         }
