@@ -92,6 +92,7 @@ input_active  = false;
 input_string  = "";
 input_maxlen  = 20;
 input_label   = "";
+input_hint    = "Begin typing, then press Enter.";
 
 // ── Codename — uses o_ui_naming ───────────────────────────────────
 naming_active = false;
@@ -169,8 +170,9 @@ _show_choice = method(self, function(label_a = "YES", label_b = "NO") {
 });
 
 // Begin text input mode
-_begin_input = method(self, function(label, maxlen = 20) {
+_begin_input = method(self, function(label, maxlen = 20, hint = "Begin typing, then press Enter.") {
     input_label   = label;
+    input_hint    = hint;
     input_string  = "";
     input_maxlen  = maxlen;
     input_active  = true;
