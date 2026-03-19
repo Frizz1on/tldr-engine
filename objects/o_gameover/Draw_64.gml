@@ -14,6 +14,14 @@ if (state >= 2) {
     draw_set_alpha(image_alpha * 0.85);
     draw_rectangle(0, 0, _gw, _gh, false);
     draw_set_alpha(1);
+
+    // GAME OVER title (centered, full-strength alpha as it settles in)
+    var _go_scale = 2;
+    var _go_w = sprite_get_width(spr_ui_gameover) * _go_scale;
+    var _go_x = (_gw - _go_w) * 0.5;
+    var _go_y = 40;
+    var _go_alpha = clamp(image_alpha * 1.25, 0, 1);
+    draw_sprite_ext(spr_ui_gameover, 0, _go_x, _go_y, _go_scale, _go_scale, 0, c_white, _go_alpha);
 }
 
 // Eye — visible from state 3 onward

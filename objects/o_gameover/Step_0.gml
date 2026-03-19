@@ -34,7 +34,8 @@ if (state < 3) {
         state   = 2;
     }
     if (timer == 200) {
-        music_play(mus_defeat, 0, true);
+        if (!_is_first_death)
+            music_play(mus_defeat, 0, true);
         state = 3;
         // Fade in eye
         animate(0, 0.9, 40, anime_curve.linear, id, "eye_alpha");
