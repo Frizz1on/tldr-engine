@@ -104,6 +104,10 @@ naming_done   = false;
 flood_lines   = [];    // array of {text, x, y, rot, alpha, speed_y}
 flood_timer   = 0;
 flood_covered = false;
+flood_cover_alpha = 0;
+flood_final_text_alpha = 0;
+flood_final_text = "My love shall become yours";
+flood_rumble_handle = -1;
 
 // ── Shiro whisper lines (rare, appear during flood) ───────────────
 _shiro_lines = [
