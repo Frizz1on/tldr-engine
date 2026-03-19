@@ -11,10 +11,6 @@ eye_yscale = 1 + sin(_eye_pulse_t * 0.7) * 0.025;
 var _gui_w = display_get_gui_width();
 var _gui_h = display_get_gui_height();
 var _dialogue_y = _gui_h * 0.45;
-var _dialogue_x = function(_text) {
-    draw_set_font(loc_font("main"));
-    return (_gui_w - string_width(_text)) * 0.5;
-};
 
 // ── States 0-2: soul shatter ──────────────────────────────────────
 if (state < 3) {
@@ -68,10 +64,12 @@ if (state == 3) {
         var _line = _is_first_death
             ? _death_lines_first[0]
             : array_shuffle(_death_quotes_repeat)[0];
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_line)) * 0.5;
 
         inst_dialogue = text_typer_create(
             _line,
-            _dialogue_x(_line), _dialogue_y,
+            _dialogue_x, _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
@@ -84,9 +82,11 @@ if (state == 3) {
     if (_is_first_death && !instance_exists(inst_dialogue) && _eye_phase == 1) {
         if (_death_line_index < array_length(_death_lines_first)) {
             var _line = _death_lines_first[_death_line_index];
+            draw_set_font(loc_font("main"));
+            var _dialogue_x = (_gui_w - string_width(_line)) * 0.5;
             inst_dialogue = text_typer_create(
                 _line,
-                _dialogue_x(_line), _dialogue_y,
+                _dialogue_x, _dialogue_y,
                 DEPTH_UI.DIALOGUE_UI,
                 "{preset(god_text)}{can_skip(false)}",
                 "{p}{e}",
@@ -122,9 +122,11 @@ if (state == 5 && selection == 0) {
     if (ui_alpha > 0) ui_alpha -= 0.05;
     if (timer == 1) {
         music_stop(0);
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_retry_line)) * 0.5;
         inst_dialogue = text_typer_create(
             _retry_line,
-            _dialogue_x(_retry_line), _dialogue_y,
+            _dialogue_x, _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
@@ -144,9 +146,11 @@ if (state == 5 && selection == 1) {
     image_alpha = 0;
     if (timer == 1) {
         music_stop(0);
+        draw_set_font(loc_font("main"));
+        var _dialogue_x = (_gui_w - string_width(_give_up_line)) * 0.5;
         inst_dialogue = text_typer_create(
             _give_up_line,
-            _dialogue_x(_give_up_line), _dialogue_y,
+            _dialogue_x, _dialogue_y,
             DEPTH_UI.DIALOGUE_UI,
             "{preset(god_text)}{can_skip(false)}",
             "{p}{e}",
