@@ -1,7 +1,7 @@
 depth = DEPTH_UI.CONSOLE;
 
 // ── Target room — change this to your tutorial room ───────────────
-target_room = room_intro;   // placeholder — replace with room_tutorial
+target_room = room_tutorial_intro;
 
 // ── Saved profile struct — populated as questions are answered ────
 global.eye_profile = {
@@ -92,6 +92,7 @@ input_active  = false;
 input_string  = "";
 input_maxlen  = 20;
 input_label   = "";
+input_hint    = "Begin typing, then press Enter.";
 
 // ── Codename — uses o_ui_naming ───────────────────────────────────
 naming_active = false;
@@ -169,8 +170,9 @@ _show_choice = method(self, function(label_a = "YES", label_b = "NO") {
 });
 
 // Begin text input mode
-_begin_input = method(self, function(label, maxlen = 20) {
+_begin_input = method(self, function(label, maxlen = 20, hint = "Begin typing, then press Enter.") {
     input_label   = label;
+    input_hint    = hint;
     input_string  = "";
     input_maxlen  = maxlen;
     input_active  = true;
@@ -190,14 +192,17 @@ _spawn_flood_line = method(self, function(is_shiro = false) {
     var _text = is_shiro
         ? _shiro_lines[_shiro_spawned++ mod array_length(_shiro_lines)]
         : "ACCEPT EVERYTHING";
+    var _spawn_from_top = (irandom(1) == 0);
+    var _spawn_y = (_spawn_from_top ? -1 : 1) * (240 + random(80));
+
     array_push(flood_lines, {
         text   : _text,
         x      : random(640),
-        y      : choose(-1, 1) * (240 + random(80)),   // top or bottom
+        y      : _spawn_y,
         rot    : random_range(-8, 8),
         alpha  : 0,
-        spd    : random_range(0.6, 1.8) * (flood_lines[0].y < 0 ? 1 : -1),
-        col    : is_shiro ? make_color_rgb(180, 60, 60) : c_black,
+        spd    : random_range(0.6, 1.8) * (_spawn_from_top ? 1 : -1),
+        col    : is_shiro ? make_color_rgb(180, 60, 60) : c_white,
         scale  : random_range(0.8, 1.4),
     });
 });
