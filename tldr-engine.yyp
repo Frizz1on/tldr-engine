@@ -418,6 +418,7 @@
     {"id":{"name":"o_ex_turn_complex_box","path":"objects/o_ex_turn_complex_box/o_ex_turn_complex_box.yy",},},
     {"id":{"name":"o_ex_turn_dentos","path":"objects/o_ex_turn_dentos/o_ex_turn_dentos.yy",},},
     {"id":{"name":"o_ex_turn_sguy","path":"objects/o_ex_turn_sguy/o_ex_turn_sguy.yy",},},
+    {"id":{"name":"o_eye","path":"objects/o_eye/o_eye.yy",},},
     {"id":{"name":"o_fader","path":"objects/o_fader/o_fader.yy",},},
     {"id":{"name":"o_firefly_spawner","path":"objects/o_firefly_spawner/o_firefly_spawner.yy",},},
     {"id":{"name":"o_firefly","path":"objects/o_firefly/o_firefly.yy",},},
@@ -507,6 +508,7 @@
     {"id":{"name":"room_ex_shopzone","path":"rooms/room_ex_shopzone/room_ex_shopzone.yy",},},
     {"id":{"name":"room_gameover","path":"rooms/room_gameover/room_gameover.yy",},},
     {"id":{"name":"room_init","path":"rooms/room_init/room_init.yy",},},
+    {"id":{"name":"room_intro","path":"rooms/room_intro/room_intro.yy",},},
     {"id":{"name":"room_lb_dark_lighting","path":"rooms/room_lb_dark_lighting/room_lb_dark_lighting.yy",},},
     {"id":{"name":"room_lunchroom1","path":"rooms/room_lunchroom1/room_lunchroom1.yy",},},
     {"id":{"name":"room_lunchroom2_South","path":"rooms/room_lunchroom2_South/room_lunchroom2_South.yy",},},
@@ -1609,6 +1611,7 @@
     {"roomId":{"name":"room_palace10","path":"rooms/room_palace10/room_palace10.yy",},},
     {"roomId":{"name":"room_palacetown1","path":"rooms/room_palacetown1/room_palacetown1.yy",},},
     {"roomId":{"name":"room_palacetown2","path":"rooms/room_palacetown2/room_palacetown2.yy",},},
+    {"roomId":{"name":"room_intro","path":"rooms/room_intro/room_intro.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
