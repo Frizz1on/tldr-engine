@@ -1,6 +1,6 @@
 draw_set_font(loc_font("main"));
-var _gw = display_get_gui_width();
-var _gh = display_get_gui_height();
+var _gw = 640;
+var _gh = 480;
 
 // Freeze frame
 if (state == 0) {
