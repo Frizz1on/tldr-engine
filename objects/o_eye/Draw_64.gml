@@ -1,5 +1,5 @@
-var _gw = display_get_gui_width();
-var _gh = display_get_gui_height();
+var _gw = 640;
+var _gh = 480;
 
 // Background fill
 draw_set_color(bg_color);

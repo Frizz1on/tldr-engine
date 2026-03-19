@@ -11,6 +11,13 @@ if keyboard_check_pressed(vk_f4) {
         window_center()
 }
 
+if !window_get_fullscreen() {
+    if window_get_width() != 960 || window_get_height() != 540 {
+        window_set_size(960, 540)
+        window_center()
+    }
+}
+
 if frames % 30 == 0
 	global.time ++
 
